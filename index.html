@@ -3,563 +3,897 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>من سيربح المليون - النسخة الأصلية</title>
-
+<title>من سيربح المليون</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
-
 <style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:'Cairo',sans-serif;-webkit-tap-highlight-color:transparent}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Cairo',sans-serif;-webkit-tap-highlight-color:transparent;user-select:none}
 html,body{height:100%;overflow-x:hidden}
 
-/* ===== الألوان الأصلية للعبة ===== */
 body{
   background:
-    radial-gradient(ellipse at center, #0a2a5e 0%, #061a3d 40%, #020a1f 100%);
-  color:#fff;min-height:100vh;position:relative;
-  overflow-x:hidden;
+    radial-gradient(ellipse at top, #e0e0e0 0%, #c0c0c0 40%, #a0a0a0 100%),
+    linear-gradient(135deg, #d0d0d0 0%, #b0b0b0 100%);
+  color:#000;min-height:100vh;position:relative;overflow-x:hidden;
 }
 
-/* خلفية اللعبة الأصلية - دوائر مضيئة */
-.bg-circles{
-  position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;
+/* خلفية متحركة */
+.bg-effects{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.bg-effects::before{
+  content:"";position:absolute;inset:0;
+  background:
+    radial-gradient(circle at 20% 30%, rgba(255,255,255,0.3) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(255,255,255,0.2) 0%, transparent 50%);
+  animation:bgPulse 6s infinite ease-in-out;
 }
-.bg-circles::before,.bg-circles::after{
-  content:"";position:absolute;border-radius:50%;
-  background:radial-gradient(circle,rgba(0,120,255,0.15) 0%,transparent 70%);
-}
-.bg-circles::before{width:600px;height:600px;top:-200px;right:-200px;animation:floatBg 20s infinite ease-in-out}
-.bg-circles::after{width:500px;height:500px;bottom:-150px;left:-150px;animation:floatBg 25s infinite ease-in-out reverse}
-@keyframes floatBg{0%,100%{transform:translate(0,0)}50%{transform:translate(50px,30px)}}
+@keyframes bgPulse{0%,100%{opacity:0.5}50%{opacity:1}}
 
-/* شبكة النقاط */
-.grid-bg{
+.bg-lines{
   position:fixed;inset:0;z-index:0;pointer-events:none;
-  background-image:
-    linear-gradient(rgba(255,215,0,0.03) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(255,215,0,0.03) 1px,transparent 1px);
-  background-size:40px 40px;
+  background:
+    linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(255,255,255,0.1) 1px, transparent 1px);
+  background-size:50px 50px;
 }
 
-/* ===== الشاشات ===== */
+/* الشاشات */
 .screen{display:none;position:relative;z-index:1;min-height:100vh;padding:10px}
-.screen.active{display:block;animation:screenIn 0.5s ease-out}
-@keyframes screenIn{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}
+.screen.active{display:block;animation:screenIn 0.4s ease-out}
+@keyframes screenIn{from{opacity:0;transform:scale(0.98)}to{opacity:1;transform:scale(1)}}
 
-/* ===== شاشة البداية ===== */
-.start-container{
-  max-width:480px;margin:0 auto;padding:15px;
+/* شاشة البداية */
+.start-wrap{
+  max-width:500px;margin:0 auto;padding:20px;
   display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;
 }
 
-/* الشعار الماسي */
-.logo-diamond{
-  position:relative;width:220px;height:220px;margin:10px auto;
+/* الشعار الزجاجي النافر المضيء */
+.logo-glass{
+  position:relative;width:180px;height:180px;margin:15px auto;
+  background:
+    linear-gradient(135deg, 
+      rgba(255,255,255,0.6) 0%, 
+      rgba(255,255,255,0.4) 25%,
+      rgba(240,240,240,0.3) 50%,
+      rgba(255,255,255,0.4) 75%,
+      rgba(255,255,255,0.5) 100%);
+  backdrop-filter:blur(15px);-webkit-backdrop-filter:blur(15px);
+  border:3px solid rgba(255,255,255,0.8);
+  border-radius:50%;
   display:flex;align-items:center;justify-content:center;
+  box-shadow:
+    0 0 40px rgba(100,100,100,0.4),
+    0 0 80px rgba(100,100,100,0.2),
+    inset 0 0 30px rgba(255,255,255,0.6),
+    inset 0 0 60px rgba(255,255,255,0.3),
+    0 10px 40px rgba(0,0,0,0.3);
+  animation:logoGlow 3s infinite ease-in-out;
 }
-.logo-diamond::before{
-  content:"";position:absolute;inset:0;
-  background:linear-gradient(135deg,#ffd700 0%,#ffaa00 50%,#ffd700 100%);
-  clip-path:polygon(50% 0%,100% 50%,50% 100%,0% 50%);
-  box-shadow:0 0 60px rgba(255,215,0,0.6),inset 0 0 30px rgba(255,255,255,0.3);
-  animation:diamondPulse 3s infinite ease-in-out;
+@keyframes logoGlow{
+  0%,100%{box-shadow:0 0 40px rgba(100,100,100,0.4),0 0 80px rgba(100,100,100,0.2),inset 0 0 30px rgba(255,255,255,0.6),0 10px 40px rgba(0,0,0,0.3)}
+  50%{box-shadow:0 0 60px rgba(100,100,100,0.6),0 0 100px rgba(100,100,100,0.3),inset 0 0 40px rgba(255,255,255,0.8),0 10px 40px rgba(0,0,0,0.3)}
 }
-.logo-diamond::after{
+.logo-glass::before{
   content:"";position:absolute;inset:8px;
-  background:linear-gradient(135deg,#001f3f 0%,#003366 100%);
-  clip-path:polygon(50% 0%,100% 50%,50% 100%,0% 50%);
+  background:
+    linear-gradient(135deg, 
+      rgba(255,255,255,0.9) 0%, 
+      rgba(240,240,240,0.95) 50%,
+      rgba(255,255,255,0.9) 100%);
+  border-radius:50%;
+  box-shadow:inset 0 0 20px rgba(0,0,0,0.1),inset 0 0 40px rgba(200,200,200,0.2);
 }
-.logo-diamond i{
-  position:relative;z-index:2;font-size:4rem;color:#ffd700;
-  filter:drop-shadow(0 0 15px rgba(255,215,0,0.8));
-  animation:iconSpin 6s infinite linear;
-}
-@keyframes diamondPulse{0%,100%{transform:scale(1);filter:brightness(1)}50%{transform:scale(1.05);filter:brightness(1.2)}}
-@keyframes iconSpin{0%{transform:rotateY(0)}100%{transform:rotateY(360deg)}}
-
-.game-title{
-  font-size:clamp(1.8rem,6vw,2.8rem);font-weight:900;text-align:center;
-  background:linear-gradient(180deg,#fff8dc 0%,#ffd700 50%,#ff8c00 100%);
+.logo-glass i{
+  position:relative;z-index:2;font-size:3.5rem;
+  background:linear-gradient(135deg, #888, #555, #333);
   -webkit-background-clip:text;background-clip:text;color:transparent;
-  text-shadow:0 0 30px rgba(255,215,0,0.5);
-  margin:10px 0;line-height:1.3;
+  filter:drop-shadow(0 0 10px rgba(100,100,100,0.5));
+  animation:iconRotate 4s infinite linear;
 }
-.game-subtitle{color:#ffd700;font-size:1rem;margin-bottom:20px;text-align:center;font-weight:700}
+@keyframes iconRotate{0%{transform:rotateY(0)}100%{transform:rotateY(360deg)}}
 
-/* بطاقة الإدخال */
-.input-card{
-  background:linear-gradient(135deg,rgba(0,31,63,0.8),rgba(0,51,102,0.6));
-  border:2px solid #ffd700;border-radius:20px;padding:20px;
-  box-shadow:0 0 30px rgba(255,215,0,0.3),inset 0 0 20px rgba(0,0,0,0.5);
-  width:100%;backdrop-filter:blur(10px);
+.title-glass{
+  font-size:clamp(2rem,7vw,3rem);font-weight:900;text-align:center;
+  background:linear-gradient(180deg, #333 0%, #555 50%, #777 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  text-shadow:0 0 30px rgba(100,100,100,0.3);
+  margin:15px 0;line-height:1.3;
+  filter:drop-shadow(0 2px 8px rgba(0,0,0,0.3));
 }
+
+/* بطاقة زجاجية نافرة مضيئة */
+.glass-card{
+  background:
+    linear-gradient(135deg, 
+      rgba(255,255,255,0.4) 0%, 
+      rgba(255,255,255,0.6) 50%,
+      rgba(255,255,255,0.4) 100%);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border:2px solid rgba(255,255,255,0.8);
+  border-radius:25px;padding:25px;
+  box-shadow:
+    0 0 30px rgba(100,100,100,0.3),
+    0 0 60px rgba(100,100,100,0.15),
+    inset 0 0 30px rgba(255,255,255,0.5),
+    inset 0 0 60px rgba(255,255,255,0.1),
+    0 15px 50px rgba(0,0,0,0.2);
+  width:100%;
+}
+
 .form-control{
-  background:rgba(0,0,0,0.5);border:2px solid #ffd700;color:#fff;
-  border-radius:12px;padding:12px 15px;font-size:1.1rem;text-align:center;
+  background:
+    linear-gradient(135deg, 
+      rgba(255,255,255,0.8) 0%, 
+      rgba(240,240,240,0.9) 50%,
+      rgba(255,255,255,0.8) 100%);
+  border:2px solid rgba(80,80,80,0.6);
+  color:#333;border-radius:15px;padding:12px 15px;font-size:1.1rem;
+  text-align:center;backdrop-filter:blur(10px);
+  box-shadow:inset 0 0 15px rgba(0,0,0,0.05),0 0 20px rgba(100,100,100,0.15);
 }
-.form-control:focus{background:rgba(0,0,0,0.7);border-color:#ffaa00;color:#fff;box-shadow:0 0 15px rgba(255,215,0,0.5)}
-.form-control::placeholder{color:rgba(255,255,255,0.4)}
-.form-label{color:#ffd700;font-weight:700;margin-bottom:8px;font-size:0.95rem}
-
-/* اختيار الثيم */
-.theme-row{display:flex;justify-content:center;gap:10px;margin:15px 0}
-.theme-circle{
-  width:40px;height:40px;border-radius:50%;cursor:pointer;
-  border:3px solid transparent;transition:all 0.3s;position:relative;
+.form-control:focus{
+  background:linear-gradient(135deg, rgba(255,255,255,0.95), rgba(245,245,245,0.95));
+  border-color:#555;color:#333;
+  box-shadow:inset 0 0 20px rgba(0,0,0,0.05),0 0 30px rgba(100,100,100,0.3);
 }
-.theme-circle:hover{transform:scale(1.15)}
-.theme-circle.active{border-color:#fff;box-shadow:0 0 20px currentColor}
-.theme-circle[data-t="original"]{background:linear-gradient(135deg,#001f3f,#ffd700)}
-.theme-circle[data-t="ruby"]{background:linear-gradient(135deg,#4a0000,#ff0040)}
-.theme-circle[data-t="emerald"]{background:linear-gradient(135deg,#003320,#00ff88)}
-.theme-circle[data-t="royal"]{background:linear-gradient(135deg,#1a0040,#aa00ff)}
+.form-control::placeholder{color:rgba(0,0,0,0.4)}
+.form-label{color:#555;font-weight:700;margin-bottom:10px;font-size:1rem;text-shadow:0 0 10px rgba(255,255,255,0.5)}
 
-/* الأزرار */
-.btn-game{
-  position:relative;width:100%;padding:14px 20px;margin:6px 0;
-  background:linear-gradient(135deg,#003366 0%,#001f3f 50%,#003366 100%);
-  border:2px solid #ffd700;color:#ffd700;border-radius:30px;
+/* الأزرار الزجاجية النافرة المضيئة */
+.btn-glass{
+  position:relative;width:100%;padding:14px 20px;margin:8px 0;
+  background:
+    linear-gradient(135deg, 
+      rgba(255,255,255,0.6) 0%, 
+      rgba(240,240,240,0.5) 25%,
+      rgba(220,220,220,0.4) 50%,
+      rgba(255,255,255,0.5) 75%,
+      rgba(255,255,255,0.6) 100%);
+  backdrop-filter:blur(15px);-webkit-backdrop-filter:blur(15px);
+  border:2px solid rgba(80,80,80,0.7);
+  color:#333;border-radius:30px;
   font-size:1.1rem;font-weight:900;cursor:pointer;
-  transition:all 0.3s;overflow:hidden;
-  box-shadow:0 4px 15px rgba(0,0,0,0.5),inset 0 0 10px rgba(255,215,0,0.1);
+  transition:all 0.2s;overflow:hidden;
+  box-shadow:
+    0 0 25px rgba(100,100,100,0.3),
+    0 0 50px rgba(100,100,100,0.15),
+    inset 0 0 20px rgba(255,255,255,0.5),
+    0 8px 25px rgba(0,0,0,0.2);
+  text-shadow:0 0 5px rgba(255,255,255,0.5);
 }
-.btn-game:hover{
-  background:linear-gradient(135deg,#ffd700 0%,#ffaa00 100%);color:#001f3f;
-  transform:translateY(-2px);box-shadow:0 6px 20px rgba(255,215,0,0.5);
+.btn-glass:hover{
+  background:linear-gradient(135deg, rgba(255,255,255,0.8), rgba(240,240,240,0.7), rgba(255,255,255,0.7));
+  transform:translateY(-2px);
+  box-shadow:0 0 35px rgba(100,100,100,0.4),0 0 70px rgba(100,100,100,0.2),inset 0 0 30px rgba(255,255,255,0.6),0 12px 35px rgba(0,0,0,0.3);
+  color:#000;
 }
-.btn-game i{margin-left:8px}
-.btn-game::before{
+.btn-glass i{margin-left:8px}
+.btn-glass::before{
   content:"";position:absolute;top:0;left:-100%;width:100%;height:100%;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.3),transparent);
-  transition:left 0.6s;
+  background:linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+  transition:left 0.4s;
 }
-.btn-game:hover::before{left:100%}
+.btn-glass:hover::before{left:100%}
 
-/* ===== شاشة اللعبة - التصميم الأصلي المدمج ===== */
-.game-layout{
-  display:grid;grid-template-columns:1fr 200px;gap:10px;
-  max-width:1200px;margin:0 auto;padding:8px;
+/* ========== شاشة اللعبة ========== */
+.game-container{
+  max-width:1400px;margin:0 auto;padding:10px;
+  display:grid;grid-template-columns:1fr 220px;gap:15px;
 }
-@media(max-width:900px){
-  .game-layout{grid-template-columns:1fr;gap:8px}
-}
+@media(max-width:900px){.game-container{grid-template-columns:1fr;gap:10px}}
 
-/* رأس اللعبة */
-.game-topbar{
+/* الشريط العلوي */
+.top-bar{
   grid-column:1/-1;
-  background:linear-gradient(180deg,rgba(0,31,63,0.9),rgba(0,20,40,0.9));
-  border:2px solid #ffd700;border-radius:15px;
-  padding:8px 15px;display:flex;justify-content:space-between;align-items:center;
-  box-shadow:0 0 20px rgba(255,215,0,0.2);
+  background:
+    linear-gradient(135deg, 
+      rgba(255,255,255,0.6) 0%, 
+      rgba(255,255,255,0.8) 50%,
+      rgba(255,255,255,0.6) 100%);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border:2px solid rgba(80,80,80,0.7);
+  border-radius:20px;padding:10px 20px;
+  display:flex;justify-content:space-between;align-items:center;
+  box-shadow:
+    0 0 30px rgba(100,100,100,0.2),
+    inset 0 0 20px rgba(255,255,255,0.5),
+    0 10px 40px rgba(0,0,0,0.15);
 }
-.player-block{display:flex;align-items:center;gap:10px}
+.player-info{display:flex;align-items:center;gap:12px}
 .avatar{
-  width:40px;height:40px;border-radius:50%;
-  background:linear-gradient(135deg,#ffd700,#ff8c00);
+  width:45px;height:45px;border-radius:50%;
+  background:
+    linear-gradient(135deg, 
+      rgba(255,255,255,0.8) 0%, 
+      #888 50%,
+      rgba(255,255,255,0.6) 100%);
   display:flex;align-items:center;justify-content:center;
-  font-weight:900;color:#001f3f;font-size:1.2rem;
-  box-shadow:0 0 10px rgba(255,215,0,0.5);
+  font-weight:900;color:#fff;font-size:1.3rem;
+  box-shadow:
+    0 0 20px rgba(100,100,100,0.4),
+    inset 0 0 15px rgba(255,255,255,0.7),
+    0 5px 15px rgba(0,0,0,0.2);
 }
-.pname{font-weight:700;font-size:1rem;color:#ffd700}
-.pscore{font-size:0.85rem;color:#fff}
+.p-name{font-weight:700;font-size:1.1rem;color:#333;text-shadow:0 0 10px rgba(255,255,255,0.5)}
+.p-qnum{font-size:0.9rem;color:#555;opacity:0.9}
 
-/* المؤقت الدائري */
-.timer-wrap{position:relative;width:55px;height:55px}
-.timer-ring{transform:rotate(-90deg)}
-.timer-ring circle{fill:none;stroke-width:4}
-.timer-ring .bg{stroke:rgba(255,255,255,0.1)}
-.timer-ring .fg{stroke:#ffd700;stroke-linecap:round;transition:stroke-dashoffset 1s linear}
-.timer-ring .fg.danger{stroke:#ff3860;animation:timerPulse 0.5s infinite}
-@keyframes timerPulse{0%,100%{opacity:1}50%{opacity:0.5}}
-.timer-num{
-  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-  font-weight:900;font-size:1.2rem;color:#ffd700;
+/* المؤقت الدائري النابض */
+.timer-wrapper{
+  display:flex;align-items:center;gap:10px;
 }
-.timer-num.danger{color:#ff3860;animation:numPulse 0.5s infinite}
-@keyframes numPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.2)}}
+.timer-circle{
+  position:relative;width:60px;height:60px;
+  background:
+    linear-gradient(135deg, 
+      rgba(255,255,255,0.6) 0%, 
+      rgba(255,255,255,0.8) 50%,
+      rgba(255,255,255,0.6) 100%);
+  backdrop-filter:blur(15px);
+  border:3px solid rgba(80,80,80,0.7);
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:
+    0 0 30px var(--timer-glow, rgba(100,100,100,0.4)),
+    inset 0 0 20px rgba(255,255,255,0.7),
+    0 5px 20px rgba(0,0,0,0.15);
+  animation:pulse 1s infinite;
+  transition:all 0.3s;
+}
+@keyframes pulse{
+  0%,100%{transform:scale(1)}
+  50%{transform:scale(1.05)}
+}
+.timer-circle::before{
+  content:"";position:absolute;inset:0;
+  border-radius:50%;
+  background:conic-gradient(var(--timer-color, #2ecc71) var(--timer-pct, 100%), transparent 0);
+  opacity:0.3;
+}
+.timer-circle::after{
+  content:"";position:absolute;inset:4px;
+  background:linear-gradient(135deg, rgba(255,255,255,0.9), rgba(240,240,240,0.95));
+  border-radius:50%;
+  box-shadow:inset 0 0 10px rgba(0,0,0,0.05);
+}
+.timer-num{
+  position:relative;z-index:2;
+  font-weight:900;font-size:1.3rem;
+  color:var(--timer-color, #2ecc71);
+  text-shadow:0 0 10px currentColor;
+  transition:color 0.3s;
+}
+.timer-circle.danger{animation:pulseDanger 0.5s infinite}
+@keyframes pulseDanger{
+  0%,100%{transform:scale(1)}
+  50%{transform:scale(1.1)}
+}
 
 /* وسائل المساعدة */
-.helpers-bar{
-  grid-column:1/-1;display:flex;justify-content:center;gap:10px;padding:5px;
-}
+.helpers{display:flex;gap:10px}
 .helper{
-  width:55px;height:55px;border-radius:50%;
-  background:linear-gradient(135deg,#003366,#001f3f);
-  border:2px solid #ffd700;color:#ffd700;
-  display:flex;align-items:center;justify-content:center;font-size:1.3rem;
-  cursor:pointer;position:relative;transition:all 0.3s;
-  box-shadow:0 0 10px rgba(255,215,0,0.3);
+  width:50px;height:50px;border-radius:50%;
+  background:
+    linear-gradient(135deg, 
+      rgba(255,255,255,0.6) 0%, 
+      rgba(255,255,255,0.8) 50%,
+      rgba(255,255,255,0.6) 100%);
+  backdrop-filter:blur(10px);
+  border:2px solid rgba(80,80,80,0.7);
+  color:#333;
+  display:flex;align-items:center;justify-content:center;font-size:1.2rem;
+  cursor:pointer;position:relative;transition:all 0.2s;
+  box-shadow:
+    0 0 20px rgba(100,100,100,0.3),
+    inset 0 0 15px rgba(255,255,255,0.6),
+    0 5px 15px rgba(0,0,0,0.15);
 }
 .helper:hover:not(:disabled){
-  background:linear-gradient(135deg,#ffd700,#ffaa00);color:#001f3f;
-  transform:scale(1.1);box-shadow:0 0 20px rgba(255,215,0,0.6);
+  transform:scale(1.1);
+  box-shadow:0 0 30px rgba(100,100,100,0.4),inset 0 0 20px rgba(255,255,255,0.7);
 }
 .helper:disabled{opacity:0.3;cursor:not-allowed}
-.helper .used{
-  position:absolute;top:-3px;right:-3px;background:#ff3860;color:#fff;
+.helper .used-mark{
+  position:absolute;top:-3px;right:-3px;background:#e74c3c;color:#fff;
   width:20px;height:20px;border-radius:50%;font-size:0.7rem;
   display:flex;align-items:center;justify-content:center;font-weight:900;
+  box-shadow:0 0 10px rgba(231,76,60,0.8);
 }
 
-/* صندوق السؤال - شكل ماسي */
-.question-diamond{
-  position:relative;max-width:700px;margin:10px auto;padding:20px 15px;
-  background:linear-gradient(135deg,rgba(0,31,63,0.95),rgba(0,51,102,0.85));
-  border:3px solid #ffd700;border-radius:20px;
-  box-shadow:0 0 30px rgba(255,215,0,0.4),inset 0 0 20px rgba(0,0,0,0.5);
+/* المنطقة الرئيسية */
+.main-area{display:flex;flex-direction:column;gap:15px}
+
+/* صندوق السؤال - زجاجي نافر مضيء */
+.question-box{
+  position:relative;
+  background:
+    linear-gradient(135deg, 
+      rgba(255,255,255,0.6) 0%, 
+      rgba(255,255,255,0.8) 25%,
+      rgba(245,245,245,0.9) 50%,
+      rgba(255,255,255,0.6) 100%);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border:3px solid rgba(80,80,80,0.7);
+  border-radius:50px;
+  padding:25px 20px;
   text-align:center;
+  box-shadow:
+    0 0 40px rgba(100,100,100,0.3),
+    0 0 80px rgba(100,100,100,0.15),
+    inset 0 0 30px rgba(255,255,255,0.5),
+    inset 0 0 60px rgba(255,255,255,0.1),
+    0 15px 50px rgba(0,0,0,0.15);
+  overflow:hidden;
 }
-.question-diamond::before,.question-diamond::after{
-  content:"";position:absolute;width:30px;height:30px;
-  background:#ffd700;clip-path:polygon(50% 0%,100% 50%,50% 100%,0% 50%);
-  filter:drop-shadow(0 0 5px rgba(255,215,0,0.8));
+.question-box::before,.question-box::after{
+  content:"";position:absolute;top:50%;
+  width:20px;height:20px;
+  background:
+    radial-gradient(circle, rgba(255,255,255,0.95) 0%, rgba(200,200,200,0.8) 100%);
+  border-radius:50%;
+  box-shadow:0 0 20px rgba(150,150,150,0.6);
+  transform:translateY(-50%);
 }
-.question-diamond::before{top:-15px;left:50%;transform:translateX(-50%)}
-.question-diamond::after{bottom:-15px;left:50%;transform:translateX(-50%)}
+.question-box::before{left:-10px}
+.question-box::after{right:-10px}
 
 .q-number{
-  color:#ffd700;font-weight:700;font-size:0.9rem;margin-bottom:8px;
-  letter-spacing:1px;
+  color:#555;font-weight:700;font-size:0.95rem;margin-bottom:8px;
+  letter-spacing:1px;text-shadow:0 0 10px rgba(255,255,255,0.5);
 }
 .q-text{
-  font-size:clamp(1rem,3.2vw,1.4rem);font-weight:700;line-height:1.6;
-  color:#fff;text-shadow:0 2px 10px rgba(0,0,0,0.5);
+  font-size:clamp(1.1rem,3.5vw,1.5rem);font-weight:700;line-height:1.6;
+  color:#333;text-shadow:0 2px 10px rgba(0,0,0,0.1),0 0 20px rgba(255,255,255,0.5);
 }
 
-/* الإجابات - الشكل الماسي المميز */
-.answers-grid{
-  display:grid;grid-template-columns:1fr 1fr;gap:10px;
-  max-width:700px;margin:15px auto;padding:0 10px;
+/* منطقة الإجابات مع المؤقت في المنتصف */
+.answers-zone{
+  position:relative;
+  display:grid;
+  grid-template-columns:1fr 80px 1fr;
+  grid-template-rows:1fr 1fr;
+  gap:12px;
+  align-items:center;
+  padding:10px 0;
 }
-@media(max-width:600px){.answers-grid{grid-template-columns:1fr}}
+@media(max-width:700px){
+  .answers-zone{
+    grid-template-columns:1fr 60px 1fr;
+    gap:8px;
+  }
+}
 
-.answer{
-  position:relative;padding:12px 15px;
-  background:linear-gradient(135deg,rgba(0,31,63,0.9),rgba(0,51,102,0.8));
-  border:2px solid #ffd700;border-radius:25px;
-  color:#fff;font-weight:700;font-size:clamp(0.9rem,2.8vw,1.05rem);
-  cursor:pointer;transition:all 0.3s;
+/* الإجابات - زجاجية نافرة مضيئة */
+.answer-btn{
+  position:relative;
+  background:
+    linear-gradient(135deg, 
+      rgba(255,255,255,0.6) 0%, 
+      rgba(255,255,255,0.8) 25%,
+      rgba(245,245,245,0.9) 50%,
+      rgba(255,255,255,0.6) 100%);
+  backdrop-filter:blur(15px);-webkit-backdrop-filter:blur(15px);
+  border:2px solid rgba(80,80,80,0.7);
+  border-radius:40px;
+  padding:12px 15px;
+  color:#333;font-weight:700;
+  font-size:clamp(0.9rem,2.8vw,1.1rem);
+  cursor:pointer;transition:all 0.2s;
   display:flex;align-items:center;gap:10px;
-  box-shadow:0 4px 15px rgba(0,0,0,0.4),inset 0 0 10px rgba(255,215,0,0.1);
-  min-height:50px;
+  box-shadow:
+    0 0 25px rgba(100,100,100,0.2),
+    inset 0 0 20px rgba(255,255,255,0.5),
+    inset 0 0 40px rgba(255,255,255,0.1),
+    0 8px 25px rgba(0,0,0,0.15);
+  min-height:55px;
+  overflow:hidden;
 }
-.answer .letter{
-  background:#ffd700;color:#001f3f;
-  width:28px;height:28px;border-radius:50%;
+.answer-btn .letter{
+  background:
+    linear-gradient(135deg, 
+      rgba(255,255,255,0.9) 0%, 
+      #888 50%,
+      rgba(255,255,255,0.7) 100%);
+  color:#fff;
+  width:30px;height:30px;border-radius:50%;
   display:flex;align-items:center;justify-content:center;
-  font-weight:900;flex-shrink:0;font-size:0.9rem;
-  box-shadow:0 0 8px rgba(255,215,0,0.6);
+  font-weight:900;flex-shrink:0;font-size:0.95rem;
+  box-shadow:
+    0 0 15px rgba(100,100,100,0.4),
+    inset 0 0 10px rgba(255,255,255,0.7);
 }
-.answer:hover:not(:disabled){
-  background:linear-gradient(135deg,#ffd700,#ffaa00);color:#001f3f;
-  transform:translateY(-2px);box-shadow:0 6px 20px rgba(255,215,0,0.5);
+.answer-btn:hover:not(:disabled){
+  background:linear-gradient(135deg, rgba(255,255,255,0.8), rgba(240,240,240,0.7), rgba(255,255,255,0.7));
+  transform:translateY(-2px);
+  box-shadow:0 0 35px rgba(100,100,100,0.3),inset 0 0 30px rgba(255,255,255,0.6);
+  border-color:#555;
 }
-.answer:hover:not(:disabled) .letter{background:#001f3f;color:#ffd700}
-.answer:disabled{cursor:not-allowed}
-.answer.selected{
-  background:linear-gradient(135deg,#ff8c00,#ffa500);color:#fff;
-  border-color:#fff;animation:selectPulse 0.8s infinite;
+.answer-btn:disabled{cursor:not-allowed}
+.answer-btn.selected{
+  background:
+    linear-gradient(135deg, 
+      rgba(255,255,255,0.8) 0%, 
+      #f39c12 50%,
+      rgba(255,255,255,0.7) 100%);
+  border-color:#fff;color:#fff;
+  animation:selectPulse 0.8s infinite;
+  box-shadow:0 0 40px rgba(243,156,18,0.6),inset 0 0 30px rgba(255,255,255,0.7);
 }
-.answer.selected .letter{background:#fff;color:#ff8c00}
-@keyframes selectPulse{0%,100%{box-shadow:0 0 20px rgba(255,140,0,0.6)}50%{box-shadow:0 0 35px rgba(255,140,0,1)}}
+.answer-btn.selected .letter{background:rgba(255,255,255,0.95);color:#f39c12}
+@keyframes selectPulse{
+  0%,100%{box-shadow:0 0 30px rgba(243,156,18,0.5)}
+  50%{box-shadow:0 0 50px rgba(243,156,18,0.8)}
+}
 
-.answer.correct{
-  background:linear-gradient(135deg,#00aa55,#00dd66)!important;color:#fff;
-  border-color:#fff;animation:correctFlash 1s;
+/* ===== الإجابة الصحيحة - خضراء كاملة مع لمعة زجاجية ===== */
+.answer-btn.correct{
+  background:linear-gradient(135deg, #27ae60 0%, #2ecc71 50%, #27ae60 100%)!important;
+  border-color:#fff;color:#fff;
+  box-shadow:
+    0 0 40px rgba(39,174,96,0.6),
+    0 0 70px rgba(46,204,113,0.4),
+    inset 0 0 30px rgba(255,255,255,0.3),
+    inset 0 0 50px rgba(0,0,0,0.2);
+  animation:correctGlow 1s infinite;
+  overflow:hidden;
 }
-.answer.correct .letter{background:#fff;color:#00aa55}
-@keyframes correctFlash{0%,100%{filter:brightness(1)}50%{filter:brightness(1.5)}}
+.answer-btn.correct .letter{
+  background:rgba(255,255,255,0.95);color:#27ae60;
+  box-shadow:0 0 15px rgba(255,255,255,0.8);
+}
+@keyframes correctGlow{
+  0%,100%{box-shadow:0 0 40px rgba(39,174,96,0.6),0 0 70px rgba(46,204,113,0.4),inset 0 0 30px rgba(255,255,255,0.3)}
+  50%{box-shadow:0 0 60px rgba(39,174,96,0.8),0 0 90px rgba(46,204,113,0.6),inset 0 0 40px rgba(255,255,255,0.4)}
+}
 
-.answer.wrong{
-  background:linear-gradient(135deg,#cc0033,#ff0040)!important;color:#fff;
-  border-color:#fff;animation:wrongShake 0.5s;
+/* اللمعة البيضاء الزجاجية التي تمر من فوق الإجابة الصحيحة */
+.answer-btn.correct::before{
+  content:"";
+  position:absolute;
+  top:0;
+  left:-100%;
+  width:60%;
+  height:100%;
+  background:linear-gradient(90deg, 
+    transparent 0%, 
+    rgba(255,255,255,0.1) 30%,
+    rgba(255,255,255,0.6) 50%,
+    rgba(255,255,255,0.1) 70%,
+    transparent 100%);
+  transform:skewX(-20deg);
+  animation:glassShine 2s infinite ease-in-out;
+  pointer-events:none;
+  z-index:2;
 }
-.answer.wrong .letter{background:#fff;color:#cc0033}
-@keyframes wrongShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-10px)}75%{transform:translateX(10px)}}
+.answer-btn.correct::after{
+  content:"";
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  height:50%;
+  background:linear-gradient(180deg, 
+    rgba(255,255,255,0.35) 0%, 
+    rgba(255,255,255,0.15) 50%,
+    transparent 100%);
+  border-radius:40px 40px 0 0;
+  pointer-events:none;
+  z-index:1;
+}
+@keyframes glassShine{
+  0%{left:-100%}
+  60%,100%{left:150%}
+}
 
-.answer.eliminated{opacity:0.25;text-decoration:line-through;pointer-events:none}
+.answer-btn.wrong{
+  background:
+    linear-gradient(135deg, 
+      rgba(255,255,255,0.7) 0%, 
+      #e74c3c 50%,
+      rgba(255,255,255,0.6) 100%)!important;
+  border-color:#fff;color:#fff;
+  animation:wrongShake 0.4s;
+  box-shadow:0 0 40px rgba(231,76,60,0.6),inset 0 0 30px rgba(255,255,255,0.6);
+}
+.answer-btn.wrong .letter{background:rgba(255,255,255,0.95);color:#e74c3c}
+@keyframes wrongShake{
+  0%,100%{transform:translateX(0)}
+  25%{transform:translateX(-8px)}
+  75%{transform:translateX(8px)}
+}
+.answer-btn.eliminated{opacity:0.2;text-decoration:line-through;pointer-events:none}
 
-/* سلم الجوائز - التصميم الأصلي */
-.prize-ladder{
-  background:linear-gradient(180deg,rgba(0,31,63,0.95),rgba(0,20,40,0.95));
-  border:2px solid #ffd700;border-radius:15px;padding:8px;
-  box-shadow:0 0 20px rgba(255,215,0,0.2),inset 0 0 15px rgba(0,0,0,0.5);
-  max-height:calc(100vh - 100px);overflow-y:auto;
-}
-.prize-ladder::-webkit-scrollbar{width:5px}
-.prize-ladder::-webkit-scrollbar-thumb{background:#ffd700;border-radius:3px}
-
-.prize-row{
-  display:grid;grid-template-columns:30px 1fr;gap:8px;
-  padding:6px 10px;margin:2px 0;border-radius:8px;
-  font-weight:700;font-size:0.85rem;
-  transition:all 0.4s;align-items:center;
-  border:1px solid transparent;
-}
-.prize-row .num{color:#ffd700;text-align:center}
-.prize-row .amt{color:#fff;text-align:left;direction:ltr;font-family:'Courier New',monospace}
-.prize-row.current{
-  background:linear-gradient(90deg,#ffd700,#ffaa00);color:#001f3f;
-  transform:scale(1.05);box-shadow:0 0 15px rgba(255,215,0,0.8);
-  border-color:#fff;
-}
-.prize-row.current .num,.prize-row.current .amt{color:#001f3f;font-weight:900}
-.prize-row.passed{opacity:0.4}
-.prize-row.milestone{color:#ffd700;font-weight:900}
-.prize-row.milestone .amt{color:#ffd700}
+/* ترتيب الإجابات: أ-ب في الصف الأول، ج-د في الصف الثاني */
+.answer-btn:nth-child(1){grid-column:1;grid-row:1;justify-content:flex-end;text-align:right}
+.answer-btn:nth-child(2){grid-column:3;grid-row:1;justify-content:flex-start;text-align:left}
+.answer-btn:nth-child(3){grid-column:1;grid-row:2;justify-content:flex-end;text-align:right}
+.answer-btn:nth-child(4){grid-column:3;grid-row:2;justify-content:flex-start;text-align:left}
 
 /* زر الانسحاب */
 .quit-btn{
-  grid-column:1/-1;margin:5px auto;max-width:300px;
-  padding:10px 25px;
-  background:linear-gradient(135deg,#8b0000,#cc0033);
-  border:2px solid #ffd700;color:#ffd700;border-radius:25px;
-  font-weight:900;font-size:1rem;cursor:pointer;
-  transition:all 0.3s;display:flex;align-items:center;justify-content:center;gap:8px;
-  box-shadow:0 4px 15px rgba(0,0,0,0.5);
+  background:
+    linear-gradient(135deg, 
+      rgba(255,255,255,0.6) 0%, 
+      rgba(231,76,60,0.5) 50%,
+      rgba(255,255,255,0.5) 100%);
+  backdrop-filter:blur(15px);
+  border:2px solid rgba(80,80,80,0.7);
+  border-radius:30px;padding:12px 25px;
+  color:#333;font-weight:900;font-size:1rem;
+  cursor:pointer;transition:all 0.2s;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  box-shadow:
+    0 0 25px rgba(100,100,100,0.3),
+    inset 0 0 20px rgba(255,255,255,0.5),
+    0 8px 25px rgba(0,0,0,0.15);
+  max-width:350px;margin:10px auto;
 }
 .quit-btn:hover{
-  background:linear-gradient(135deg,#cc0033,#ff0040);color:#fff;
-  transform:translateY(-2px);box-shadow:0 6px 20px rgba(255,0,64,0.5);
+  background:linear-gradient(135deg, rgba(255,255,255,0.8), rgba(231,76,60,0.6), rgba(255,255,255,0.6));
+  transform:translateY(-2px);
+  box-shadow:0 0 35px rgba(100,100,100,0.4),inset 0 0 30px rgba(255,255,255,0.6);
+  color:#000;
 }
 
-/* ===== شاشة النتيجة ===== */
-.result-wrap{
-  max-width:500px;margin:30px auto;padding:25px;
-  background:linear-gradient(135deg,rgba(0,31,63,0.95),rgba(0,51,102,0.85));
-  border:3px solid #ffd700;border-radius:25px;text-align:center;
-  box-shadow:0 0 50px rgba(255,215,0,0.4);
+/* سلم الجوائز - عجلة زجاجية 3D مضيئة مع انعكاسات */
+.prize-wheel{
+  background:
+    linear-gradient(135deg, 
+      rgba(255,255,255,0.5) 0%, 
+      rgba(255,255,255,0.7) 50%,
+      rgba(255,255,255,0.5) 100%);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border:2px solid rgba(80,80,80,0.7);
+  border-radius:25px;padding:15px 10px;
+  box-shadow:
+    0 0 40px rgba(100,100,100,0.2),
+    inset 0 0 30px rgba(255,255,255,0.5),
+    0 15px 50px rgba(0,0,0,0.15);
+  max-height:calc(100vh - 100px);
+  overflow-y:auto;
+  perspective:1000px;
+  position:relative;
 }
-.result-icon{font-size:5rem;margin:10px 0;animation:resultBounce 1s ease-out}
-@keyframes resultBounce{0%{transform:scale(0)}50%{transform:scale(1.2)}100%{transform:scale(1)}}
+.prize-wheel::before{
+  content:"";position:absolute;top:0;left:0;right:0;bottom:0;
+  background:linear-gradient(180deg, rgba(255,255,255,0.2) 0%, transparent 50%, rgba(0,0,0,0.05) 100%);
+  pointer-events:none;border-radius:25px;
+}
+.prize-wheel::-webkit-scrollbar{width:6px}
+.prize-wheel::-webkit-scrollbar-thumb{background:rgba(100,100,100,0.5);border-radius:3px;box-shadow:0 0 10px rgba(100,100,100,0.3)}
+
+.prize-item{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:8px 12px;margin:4px 0;
+  background:
+    linear-gradient(135deg, 
+      rgba(255,255,255,0.5) 0%, 
+      rgba(255,255,255,0.7) 50%,
+      rgba(255,255,255,0.5) 100%);
+  border:1px solid rgba(80,80,80,0.6);
+  border-radius:15px;
+  font-weight:700;font-size:0.85rem;
+  transition:all 0.3s;
+  transform-style:preserve-3d;
+  box-shadow:
+    0 0 15px rgba(100,100,100,0.15),
+    inset 0 0 15px rgba(255,255,255,0.4),
+    0 5px 15px rgba(0,0,0,0.1);
+}
+.prize-item .p-num{color:#555;font-weight:900;min-width:25px;text-shadow:0 0 10px rgba(255,255,255,0.5)}
+.prize-item .p-amt{color:#555;direction:ltr;font-family:'Courier New',monospace;font-weight:700}
+.prize-item.current{
+  background:
+    linear-gradient(135deg, 
+      rgba(255,255,255,0.8) 0%, 
+      rgba(220,220,220,0.7) 50%,
+      rgba(255,255,255,0.7) 100%);
+  border-color:#555;
+  transform:scale(1.08) translateZ(20px);
+  box-shadow:
+    0 0 30px rgba(100,100,100,0.4),
+    0 0 60px rgba(100,100,100,0.2),
+    inset 0 0 20px rgba(255,255,255,0.6),
+    0 10px 30px rgba(0,0,0,0.15);
+  animation:prizeFloat 1.5s infinite ease-in-out;
+}
+.prize-item.current .p-num,.prize-item.current .p-amt{color:#333;font-weight:900;text-shadow:0 0 15px rgba(255,255,255,0.8)}
+@keyframes prizeFloat{0%,100%{transform:scale(1.08) translateZ(20px)}50%{transform:scale(1.1) translateZ(30px)}}
+.prize-item.passed{opacity:0.4;transform:scale(0.95)}
+.prize-item.milestone{border-color:rgba(80,80,80,0.9);box-shadow:0 0 20px rgba(100,100,100,0.3)}
+.prize-item.milestone .p-amt{color:#333;text-shadow:0 0 10px rgba(255,255,255,0.6)}
+
+/* ========== شاشة النتيجة ========== */
+.result-wrap{
+  max-width:500px;margin:30px auto;padding:30px;
+  background:
+    linear-gradient(135deg, 
+      rgba(255,255,255,0.6) 0%, 
+      rgba(255,255,255,0.8) 50%,
+      rgba(255,255,255,0.6) 100%);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border:3px solid rgba(80,80,80,0.7);
+  border-radius:30px;text-align:center;
+  box-shadow:
+    0 0 50px rgba(100,100,100,0.3),
+    inset 0 0 30px rgba(255,255,255,0.5),
+    0 20px 60px rgba(0,0,0,0.2);
+}
+.result-icon{font-size:5rem;margin:15px 0;filter:drop-shadow(0 0 20px rgba(100,100,100,0.5))}
 .result-title{
-  font-size:1.8rem;font-weight:900;margin:10px 0;
-  background:linear-gradient(180deg,#fff8dc,#ffd700);
+  font-size:2rem;font-weight:900;margin:15px 0;
+  background:linear-gradient(180deg, #333, #555, #777);
   -webkit-background-clip:text;background-clip:text;color:transparent;
+  text-shadow:0 0 30px rgba(100,100,100,0.3);
 }
 .result-amount{
-  font-size:clamp(1.8rem,6vw,2.8rem);font-weight:900;
-  background:linear-gradient(180deg,#ffd700,#ff8c00);
+  font-size:clamp(2rem,7vw,3rem);font-weight:900;
+  background:linear-gradient(180deg, #555, #777);
   -webkit-background-clip:text;background-clip:text;color:transparent;
   margin:15px 0;direction:ltr;display:inline-block;
+  filter:drop-shadow(0 0 20px rgba(100,100,100,0.4));
 }
+
+/* Toast notifications - زجاج محجر شبه شفاف */
+.toast-container{
+  position:fixed;top:0;left:50%;transform:translateX(-50%);
+  z-index:9999;display:flex;flex-direction:column;gap:10px;
+  pointer-events:none;
+}
+.toast{
+  background:
+    linear-gradient(135deg, 
+      rgba(255,255,255,0.5) 0%, 
+      rgba(255,255,255,0.7) 50%,
+      rgba(255,255,255,0.5) 100%);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  border:2px solid rgba(80,80,80,0.6);
+  border-radius:20px;padding:15px 25px;
+  color:#333;font-weight:700;
+  box-shadow:
+    0 0 25px rgba(100,100,100,0.3),
+    inset 0 0 20px rgba(255,255,255,0.5),
+    0 10px 40px rgba(0,0,0,0.15);
+  display:flex;align-items:center;gap:12px;
+  min-width:280px;max-width:90vw;
+  pointer-events:auto;
+  opacity:0;transform:translateY(-100px);
+}
+.toast.show{opacity:1;transform:translateY(0);animation:toastSlide 0.3s cubic-bezier(0.4,0,0.2,1)}
+@keyframes toastSlide{from{opacity:0;transform:translateY(-100px)}to{opacity:1;transform:translateY(0)}}
+.toast.success{border-color:rgba(39,174,96,0.7);box-shadow:0 0 25px rgba(39,174,96,0.3),inset 0 0 20px rgba(255,255,255,0.5)}
+.toast.error{border-color:rgba(231,76,60,0.7);box-shadow:0 0 25px rgba(231,76,60,0.3),inset 0 0 20px rgba(255,255,255,0.5)}
+.toast.info{border-color:rgba(100,100,100,0.7);box-shadow:0 0 25px rgba(100,100,100,0.3),inset 0 0 20px rgba(255,255,255,0.5)}
+.toast-icon{font-size:1.5rem;filter:drop-shadow(0 0 10px currentColor)}
+.toast-msg{flex:1;font-size:0.95rem}
 
 /* المودال */
 .modal-ov{
-  position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;
+  position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9998;
   display:none;align-items:center;justify-content:center;padding:15px;
   backdrop-filter:blur(8px);
 }
 .modal-ov.show{display:flex;animation:fadeIn 0.3s}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 .modal-box{
-  background:linear-gradient(135deg,#001f3f,#003366);
-  border:3px solid #ffd700;border-radius:20px;
-  padding:20px;max-width:450px;width:100%;
-  box-shadow:0 0 40px rgba(255,215,0,0.5);
+  background:
+    linear-gradient(135deg, 
+      rgba(255,255,255,0.6) 0%, 
+      rgba(255,255,255,0.8) 50%,
+      rgba(255,255,255,0.6) 100%);
+  backdrop-filter:blur(20px);
+  border:3px solid rgba(80,80,80,0.7);
+  border-radius:25px;padding:25px;max-width:450px;width:100%;
+  box-shadow:
+    0 0 50px rgba(100,100,100,0.3),
+    inset 0 0 30px rgba(255,255,255,0.5);
 }
 .modal-title{
-  color:#ffd700;font-weight:900;font-size:1.3rem;margin-bottom:15px;text-align:center;
+  color:#333;font-weight:900;font-size:1.4rem;margin-bottom:20px;text-align:center;
+  text-shadow:0 0 15px rgba(255,255,255,0.5);
 }
 
 /* أعمدة الجمهور */
-.aud-bars{display:flex;align-items:flex-end;justify-content:space-around;height:160px;margin:15px 0;gap:8px;padding:0 10px}
-.bar-c{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px}
+.aud-bars{display:flex;align-items:flex-end;justify-content:space-around;height:180px;margin:20px 0;gap:10px;padding:0 10px}
+.bar-c{flex:1;display:flex;flex-direction:column;align-items:center;gap:8px}
 .bar{
   width:100%;
-  background:linear-gradient(to top,#ffd700,#ffaa00);
-  border-radius:5px 5px 0 0;min-height:3px;transition:height 1.2s cubic-bezier(0.4,0,0.2,1);
-  box-shadow:0 0 10px rgba(255,215,0,0.5);
+  background:
+    linear-gradient(to top, 
+      rgba(255,255,255,0.5) 0%, 
+      #888 50%,
+      rgba(255,255,255,0.6) 100%);
+  border-radius:8px 8px 0 0;min-height:3px;
+  transition:height 1s cubic-bezier(0.4,0,0.2,1);
+  box-shadow:0 0 20px rgba(100,100,100,0.4),inset 0 0 15px rgba(255,255,255,0.5);
 }
-.bar-l{font-weight:900;color:#ffd700;font-size:1.1rem}
-.bar-p{font-size:0.85rem;color:#fff;font-weight:700}
+.bar-l{font-weight:900;color:#555;font-size:1.2rem;text-shadow:0 0 10px rgba(255,255,255,0.5)}
+.bar-p{font-size:0.9rem;color:#555;font-weight:700}
 
 /* المتصدرين */
 .lb-item{
   display:flex;justify-content:space-between;align-items:center;
-  background:rgba(0,0,0,0.4);padding:10px 15px;border-radius:10px;
-  margin:6px 0;border:1px solid rgba(255,215,0,0.3);
+  background:
+    linear-gradient(135deg, 
+      rgba(255,255,255,0.5) 0%, 
+      rgba(240,240,240,0.7) 50%,
+      rgba(255,255,255,0.5) 100%);
+  padding:12px 15px;border-radius:15px;
+  margin:8px 0;border:1px solid rgba(80,80,80,0.6);
+  backdrop-filter:blur(10px);
+  box-shadow:0 0 15px rgba(100,100,100,0.15),inset 0 0 15px rgba(255,255,255,0.4);
 }
-.lb-rank{font-size:1.5rem;font-weight:900;color:#ffd700;min-width:40px}
-.lb-rank.g{color:#ffd700;text-shadow:0 0 10px rgba(255,215,0,0.8)}
-.lb-rank.s{color:#c0c0c0}
+.lb-rank{font-size:1.5rem;font-weight:900;color:#555;min-width:40px;text-shadow:0 0 10px rgba(255,255,255,0.5)}
+.lb-rank.g{color:#555;text-shadow:0 0 15px rgba(100,100,100,0.6)}
+.lb-rank.s{color:#95a5a6}
 .lb-rank.b{color:#cd7f32}
-.lb-amt{color:#ffd700;font-weight:900;direction:ltr;font-family:'Courier New',monospace}
+.lb-amt{color:#555;font-weight:900;direction:ltr;font-family:'Courier New',monospace;text-shadow:0 0 10px rgba(255,255,255,0.5)}
 
-/* الكونفيتي */
-.confetti{position:fixed;width:10px;height:10px;top:-20px;z-index:9998;pointer-events:none}
+/* النجوم المضيئة */
+.star{position:fixed;pointer-events:none;z-index:9997}
+.star::before{
+  content:"★";
+  color:#2ecc71;
+  text-shadow:0 0 20px rgba(46,204,113,1),0 0 40px rgba(46,204,113,0.8);
+  animation:starGlow 0.5s infinite alternate;
+}
+@keyframes starGlow{from{text-shadow:0 0 20px rgba(46,204,113,1)}to{text-shadow:0 0 30px rgba(46,204,113,1),0 0 50px rgba(46,204,113,0.8)}}
 
 /* زر الصوت */
 .sound-btn{
-  position:fixed;top:10px;left:10px;z-index:100;
-  width:40px;height:40px;border-radius:50%;
-  background:rgba(0,31,63,0.9);border:2px solid #ffd700;color:#ffd700;
-  cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;
+  position:fixed;top:15px;left:15px;z-index:100;
+  width:45px;height:45px;border-radius:50%;
+  background:
+    linear-gradient(135deg, 
+      rgba(255,255,255,0.6) 0%, 
+      rgba(255,255,255,0.8) 50%,
+      rgba(255,255,255,0.6) 100%);
+  backdrop-filter:blur(15px);
+  border:2px solid rgba(80,80,80,0.7);
+  color:#333;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.1rem;
+  box-shadow:
+    0 0 20px rgba(100,100,100,0.3),
+    inset 0 0 15px rgba(255,255,255,0.6),
+    0 5px 15px rgba(0,0,0,0.15);
+  transition:all 0.2s;
 }
+.sound-btn:hover{transform:scale(1.1);box-shadow:0 0 30px rgba(100,100,100,0.4)}
 
 /* شاشة التحميل */
 .loader{
-  position:fixed;inset:0;background:#020a1f;z-index:99999;
+  position:fixed;inset:0;background:#f0f0f0;z-index:99999;
   display:flex;align-items:center;justify-content:center;flex-direction:column;gap:20px;
 }
 .loader-d{
-  width:70px;height:70px;
-  background:linear-gradient(135deg,#ffd700,#ff8c00);
-  clip-path:polygon(50% 0%,100% 50%,50% 100%,0% 50%);
-  animation:loaderSpin 1.5s infinite ease-in-out;
-  box-shadow:0 0 40px rgba(255,215,0,0.8);
+  width:80px;height:80px;
+  background:
+    linear-gradient(135deg, 
+      rgba(255,255,255,0.8) 0%, 
+      #888 50%,
+      rgba(255,255,255,0.7) 100%);
+  border-radius:50%;
+  animation:loaderSpin 1s infinite ease-in-out;
+  box-shadow:
+    0 0 50px rgba(100,100,100,0.6),
+    0 0 100px rgba(100,100,100,0.3),
+    inset 0 0 20px rgba(255,255,255,0.8);
 }
-@keyframes loaderSpin{0%{transform:rotate(0) scale(1)}50%{transform:rotate(180deg) scale(0.7)}100%{transform:rotate(360deg) scale(1)}}
-.loader-t{color:#ffd700;font-weight:700;font-size:1.2rem}
-
-/* ثيم ياقوتي */
-[data-theme="ruby"] body{background:radial-gradient(ellipse at center,#3d0000 0%,#1a0000 40%,#0a0000 100%)}
-[data-theme="ruby"] .logo-diamond::before,[data-theme="ruby"] .btn-game,[data-theme="ruby"] .form-control,[data-theme="ruby"] .answer,[data-theme="ruby"] .prize-ladder,[data-theme="ruby"] .question-diamond,[data-theme="ruby"] .game-topbar,[data-theme="ruby"] .helper,[data-theme="ruby"] .modal-box,[data-theme="ruby"] .result-wrap{border-color:#ff0040}
-[data-theme="ruby"] .logo-diamond i,[data-theme="ruby"] .game-title,[data-theme="ruby"] .form-label,[data-theme="ruby"] .btn-game,[data-theme="ruby"] .answer .letter,[data-theme="ruby"] .q-number,[data-theme="ruby"] .prize-row .num,[data-theme="ruby"] .bar-l,[data-theme="ruby"] .lb-amt,[data-theme="ruby"] .result-title,[data-theme="ruby"] .result-amount{color:#ff0040;background:linear-gradient(180deg,#ff6680,#ff0040);-webkit-background-clip:text;background-clip:text}
-[data-theme="ruby"] .answer .letter,[data-theme="ruby"] .prize-row.current{background:linear-gradient(135deg,#ff0040,#cc0033)}
-[data-theme="ruby"] .prize-row.current .num,[data-theme="ruby"] .prize-row.current .amt{color:#fff}
-
-/* ثيم زمرد */
-[data-theme="emerald"] body{background:radial-gradient(ellipse at center,#003320 0%,#001a10 40%,#000a05 100%)}
-[data-theme="emerald"] .logo-diamond::before,[data-theme="emerald"] .btn-game,[data-theme="emerald"] .form-control,[data-theme="emerald"] .answer,[data-theme="emerald"] .prize-ladder,[data-theme="emerald"] .question-diamond,[data-theme="emerald"] .game-topbar,[data-theme="emerald"] .helper,[data-theme="emerald"] .modal-box,[data-theme="emerald"] .result-wrap{border-color:#00ff88}
-[data-theme="emerald"] .logo-diamond i,[data-theme="emerald"] .game-title,[data-theme="emerald"] .form-label,[data-theme="emerald"] .btn-game,[data-theme="emerald"] .answer .letter,[data-theme="emerald"] .q-number,[data-theme="emerald"] .prize-row .num,[data-theme="emerald"] .bar-l,[data-theme="emerald"] .lb-amt,[data-theme="emerald"] .result-title,[data-theme="emerald"] .result-amount{color:#00ff88;background:linear-gradient(180deg,#66ffaa,#00ff88);-webkit-background-clip:text;background-clip:text}
-[data-theme="emerald"] .answer .letter,[data-theme="emerald"] .prize-row.current{background:linear-gradient(135deg,#00ff88,#00cc66)}
-[data-theme="emerald"] .prize-row.current .num,[data-theme="emerald"] .prize-row.current .amt{color:#003320}
-
-/* ثيم ملكي */
-[data-theme="royal"] body{background:radial-gradient(ellipse at center,#2a0050 0%,#15002a 40%,#080015 100%)}
-[data-theme="royal"] .logo-diamond::before,[data-theme="royal"] .btn-game,[data-theme="royal"] .form-control,[data-theme="royal"] .answer,[data-theme="royal"] .prize-ladder,[data-theme="royal"] .question-diamond,[data-theme="royal"] .game-topbar,[data-theme="royal"] .helper,[data-theme="royal"] .modal-box,[data-theme="royal"] .result-wrap{border-color:#aa00ff}
-[data-theme="royal"] .logo-diamond i,[data-theme="royal"] .game-title,[data-theme="royal"] .form-label,[data-theme="royal"] .btn-game,[data-theme="royal"] .answer .letter,[data-theme="royal"] .q-number,[data-theme="royal"] .prize-row .num,[data-theme="royal"] .bar-l,[data-theme="royal"] .lb-amt,[data-theme="royal"] .result-title,[data-theme="royal"] .result-amount{color:#aa00ff;background:linear-gradient(180deg,#dd66ff,#aa00ff);-webkit-background-clip:text;background-clip:text}
-[data-theme="royal"] .answer .letter,[data-theme="royal"] .prize-row.current{background:linear-gradient(135deg,#aa00ff,#7700cc)}
-[data-theme="royal"] .prize-row.current .num,[data-theme="royal"] .prize-row.current .amt{color:#fff}
+@keyframes loaderSpin{0%{transform:rotate(0) scale(1)}50%{transform:rotate(180deg) scale(0.8)}100%{transform:rotate(360deg) scale(1)}}
+.loader-t{color:#555;font-weight:700;font-size:1.3rem;text-shadow:0 0 15px rgba(255,255,255,0.5)}
 
 /* موبايل */
-@media(max-width:600px){
-  .game-topbar{padding:6px 10px}
-  .avatar{width:35px;height:35px;font-size:1rem}
-  .pname{font-size:0.9rem}
-  .pscore{font-size:0.75rem}
-  .timer-wrap{width:48px;height:48px}
-  .timer-num{font-size:1rem}
-  .helper{width:48px;height:48px;font-size:1.1rem}
-  .question-diamond{padding:15px 12px}
-  .answer{padding:10px 12px;min-height:45px}
-  .answer .letter{width:25px;height:25px;font-size:0.8rem}
-  .prize-row{font-size:0.75rem;padding:5px 8px}
-  .prize-ladder{max-height:250px}
-  .logo-diamond{width:180px;height:180px}
-  .logo-diamond i{font-size:3rem}
-  .quit-btn{padding:8px 20px;font-size:0.9rem}
+@media(max-width:700px){
+  .top-bar{padding:8px 12px;flex-wrap:wrap;gap:8px}
+  .avatar{width:40px;height:40px;font-size:1.1rem}
+  .p-name{font-size:1rem}
+  .p-qnum{font-size:0.8rem}
+  .helper{width:45px;height:45px;font-size:1rem}
+  .question-box{padding:18px 15px;border-radius:35px}
+  .answer-btn{padding:10px 12px;min-height:50px;border-radius:30px}
+  .answer-btn .letter{width:26px;height:26px;font-size:0.85rem}
+  .timer-circle{width:50px;height:50px}
+  .timer-num{font-size:1.1rem}
+  .prize-wheel{max-height:200px}
+  .prize-item{font-size:0.75rem;padding:6px 10px}
+  .logo-glass{width:160px;height:160px}
+  .logo-glass i{font-size:3rem}
+  .quit-btn{padding:10px 20px;font-size:0.9rem}
 }
 </style>
 </head>
-<body data-theme="original">
+<body>
 
 <div class="loader" id="loader">
   <div class="loader-d"></div>
   <div class="loader-t">جاري التحميل...</div>
 </div>
 
-<div class="bg-circles"></div>
-<div class="grid-bg"></div>
+<div class="bg-effects"></div>
+<div class="bg-lines"></div>
 
 <button class="sound-btn" id="soundBtn" title="الصوت"><i class="fas fa-volume-up"></i></button>
 
+<div class="toast-container" id="toastContainer"></div>
+
 <!-- ========== شاشة البداية ========== -->
 <div class="screen active" id="startScreen">
-  <div class="start-container">
-    <div class="logo-diamond">
+  <div class="start-wrap">
+    <div class="logo-glass">
       <i class="fas fa-gem"></i>
     </div>
-    <div class="game-title">من سيربح المليون</div>
-    <div class="game-subtitle">النسخة الأصلية - €1,000,000</div>
+    <div class="title-glass">من سيربح المليون</div>
+    <p style="color:#555;font-weight:700;margin-bottom:20px;text-align:center;text-shadow:0 0 10px rgba(255,255,255,0.5)">النسخة الزجاجية المضيئة</p>
 
-    <div class="input-card">
+    <div class="glass-card">
       <div class="mb-3">
         <label class="form-label"><i class="fas fa-user"></i> اسم اللاعب</label>
         <input type="text" class="form-control" id="playerName" placeholder="أدخل اسمك" maxlength="20">
       </div>
 
-      <div class="mb-3">
-        <label class="form-label text-center d-block"><i class="fas fa-palette"></i> اختر الثيم</label>
-        <div class="theme-row">
-          <div class="theme-circle active" data-t="original" title="الأصلي"></div>
-          <div class="theme-circle" data-t="ruby" title="ياقوتي"></div>
-          <div class="theme-circle" data-t="emerald" title="زمرد"></div>
-          <div class="theme-circle" data-t="royal" title="ملكي"></div>
-        </div>
-      </div>
-
-      <button class="btn-game" id="startBtn"><i class="fas fa-play"></i> ابدأ اللعبة</button>
-      <button class="btn-game" id="leaderBtn"><i class="fas fa-trophy"></i> لوحة المتصدرين</button>
-      <button class="btn-game" id="howBtn"><i class="fas fa-info-circle"></i> طريقة اللعب</button>
+      <button class="btn-glass" id="startBtn"><i class="fas fa-play"></i> ابدأ اللعبة</button>
+      <button class="btn-glass" id="leaderBtn"><i class="fas fa-trophy"></i> لوحة المتصدرين</button>
+      <button class="btn-glass" id="howBtn"><i class="fas fa-info-circle"></i> طريقة اللعب</button>
     </div>
   </div>
 </div>
 
 <!-- ========== شاشة اللعبة ========== -->
 <div class="screen" id="gameScreen">
-  <div class="game-layout">
-    <div class="game-topbar">
-      <div class="player-block">
+  <div class="game-container">
+    <div class="top-bar">
+      <div class="player-info">
         <div class="avatar" id="avatar">م</div>
         <div>
-          <div class="pname" id="displayName">اللاعب</div>
-          <div class="pscore">السؤال: <span id="qNum">1</span>/15</div>
+          <div class="p-name" id="displayName">اللاعب</div>
+          <div class="p-qnum">السؤال: <span id="qNum">1</span>/15</div>
         </div>
       </div>
-      <div class="timer-wrap">
-        <svg class="timer-ring" width="55" height="55" viewBox="0 0 55 55">
-          <circle class="bg" cx="27.5" cy="27.5" r="24"></circle>
-          <circle class="fg" id="timerFg" cx="27.5" cy="27.5" r="24" stroke-dasharray="150.8" stroke-dashoffset="0"></circle>
-        </svg>
-        <div class="timer-num" id="timerNum">30</div>
+      
+      <!-- المؤقت الدائري النابض -->
+      <div class="timer-wrapper">
+        <div class="timer-circle" id="timerCircle" style="--timer-pct:100%;--timer-glow:rgba(100,100,100,0.4);--timer-color:#555">
+          <div class="timer-num" id="timerNum">60</div>
+        </div>
+      </div>
+      
+      <div class="helpers">
+        <button class="helper" id="help5050" title="50:50"><i class="fas fa-divide"></i></button>
+        <button class="helper" id="helpPhone" title="اتصال بصديق"><i class="fas fa-phone"></i></button>
+        <button class="helper" id="helpAudience" title="الجمهور"><i class="fas fa-users"></i></button>
       </div>
     </div>
 
-    <div class="helpers-bar">
-      <button class="helper" id="help5050" title="50:50">
-        <i class="fas fa-divide"></i>
-      </button>
-      <button class="helper" id="helpPhone" title="اتصال بصديق">
-        <i class="fas fa-phone"></i>
-      </button>
-      <button class="helper" id="helpAudience" title="الجمهور">
-        <i class="fas fa-users"></i>
-      </button>
-    </div>
-
-    <div style="grid-column:1">
-      <div class="question-diamond">
+    <div class="main-area">
+      <div class="question-box">
         <div class="q-number">السؤال <span id="qNumBox">1</span> - €<span id="qValue">100</span></div>
         <div class="q-text" id="questionText">...</div>
       </div>
 
-      <div class="answers-grid" id="answers"></div>
+      <div class="answers-zone" id="answers"></div>
 
       <button class="quit-btn" id="quitBtn">
         <i class="fas fa-sign-out-alt"></i>
-        <span>انسحاب بالمبلغ: €<span id="quitAmount">0</span></span>
+        <span>انسحاب بـ €<span id="quitAmount">0</span></span>
       </button>
     </div>
 
-    <div class="prize-ladder" id="ladder"></div>
+    <div class="prize-wheel" id="ladder"></div>
   </div>
 </div>
 
 <!-- ========== شاشة النتيجة ========== -->
 <div class="screen" id="resultScreen">
   <div class="result-wrap">
-    <div class="result-icon" id="rIcon">🏆</div>
+    <div class="result-icon" id="rIcon"></div>
     <div class="result-title" id="rTitle">مبروك!</div>
-    <div style="color:#fff;opacity:0.8">لقد ربحت</div>
+    <div style="color:#555;opacity:0.8">لقد ربحت</div>
     <div class="result-amount" id="rAmount">€0</div>
-    <div style="color:#fff;opacity:0.8;margin-bottom:20px">
-      اللاعب: <span id="rName" style="color:#ffd700;font-weight:700"></span>
+    <div style="color:#555;opacity:0.8;margin-bottom:20px">
+      اللاعب: <span id="rName" style="color:#333;font-weight:700"></span>
     </div>
-    <button class="btn-game" id="againBtn"><i class="fas fa-redo"></i> العب مرة أخرى</button>
-    <button class="btn-game" id="homeBtn"><i class="fas fa-home"></i> الرئيسية</button>
+    <button class="btn-glass" id="againBtn"><i class="fas fa-redo"></i> العب مرة أخرى</button>
+    <button class="btn-glass" id="homeBtn"><i class="fas fa-home"></i> الرئيسية</button>
   </div>
 </div>
 
@@ -568,22 +902,22 @@ body{
   <div class="modal-box">
     <div class="modal-title"><i class="fas fa-trophy"></i> أفضل اللاعبين</div>
     <div id="leaderList"></div>
-    <button class="btn-game mt-3" onclick="closeModal('leaderModal')">إغلاق</button>
+    <button class="btn-glass mt-3" onclick="closeModal('leaderModal')">إغلاق</button>
   </div>
 </div>
 
 <div class="modal-ov" id="howModal">
   <div class="modal-box">
     <div class="modal-title"><i class="fas fa-info-circle"></i> طريقة اللعب</div>
-    <div style="line-height:1.8;font-size:0.95rem">
-      <p><i class="fas fa-check" style="color:#ffd700"></i> أجب على 15 سؤالاً للفوز بـ €1,000,000</p>
-      <p><i class="fas fa-check" style="color:#ffd700"></i> لديك 30 ثانية لكل سؤال</p>
-      <p><i class="fas fa-check" style="color:#ffd700"></i> نقاط الأمان: €1,000 و €32,000</p>
-      <p><i class="fas fa-check" style="color:#ffd700"></i> 3 وسائل مساعدة: 50:50 - اتصال - الجمهور</p>
-      <p><i class="fas fa-check" style="color:#ffd700"></i> يمكنك الانسحاب في أي وقت بالمبلغ المضمون</p>
-      <p><i class="fas fa-star" style="color:#ffd700"></i> ترتيب الإجابات يتغير كل مرة!</p>
+    <div style="line-height:1.9;font-size:0.95rem">
+      <p><i class="fas fa-check" style="color:#555"></i> أجب على 15 سؤالاً للفوز بـ €1,000,000</p>
+      <p><i class="fas fa-check" style="color:#555"></i> لديك 60 ثانية لكل سؤال</p>
+      <p><i class="fas fa-check" style="color:#555"></i> نقاط الأمان: €1,000 و €32,000</p>
+      <p><i class="fas fa-check" style="color:#555"></i> 3 وسائل مساعدة: 50:50 - اتصال - الجمهور</p>
+      <p><i class="fas fa-check" style="color:#555"></i> يمكنك الانسحاب في أي وقت بالمبلغ المضمون</p>
+      <p><i class="fas fa-star" style="color:#555"></i> ترتيب الإجابات يتغير كل مرة!</p>
     </div>
-    <button class="btn-game mt-3" onclick="closeModal('howModal')">فهمت!</button>
+    <button class="btn-glass mt-3" onclick="closeModal('howModal')">فهمت!</button>
   </div>
 </div>
 
@@ -591,15 +925,15 @@ body{
   <div class="modal-box">
     <div class="modal-title"><i class="fas fa-users"></i> تصويت الجمهور</div>
     <div class="aud-bars" id="audBars"></div>
-    <button class="btn-game mt-3" onclick="closeModal('audienceModal')">حسناً</button>
+    <button class="btn-glass mt-3" onclick="closeModal('audienceModal')">حسناً</button>
   </div>
 </div>
 
 <div class="modal-ov" id="phoneModal">
   <div class="modal-box">
     <div class="modal-title"><i class="fas fa-phone"></i> صديقك يقول...</div>
-    <div id="phoneText" style="font-size:1.1rem;line-height:1.8;text-align:center;padding:15px"></div>
-    <button class="btn-game mt-3" onclick="closeModal('phoneModal')">شكراً</button>
+    <div id="phoneText" style="font-size:1.1rem;line-height:1.9;text-align:center;padding:15px"></div>
+    <button class="btn-glass mt-3" onclick="closeModal('phoneModal')">شكراً</button>
   </div>
 </div>
 
@@ -607,9 +941,9 @@ body{
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-/* ====================== بنك الأسئلة (500+) ====================== */
+/* ====================== بنك الأسئلة (600 سؤال) ====================== */
 const Q = [
-  // المستوى 1 - سهل جداً (€100 - €1,000)
+  // المستوى 1 - سهل جداً (€100 - €1,000) - 120 سؤال
   {q:"ما لون السماء في يوم صافٍ؟",a:["أزرق","أخضر","أحمر","أصفر"],c:0,d:1},
   {q:"كم عدد أيام الأسبوع؟",a:["7","5","6","8"],c:0,d:1},
   {q:"ما عاصمة السعودية؟",a:["الرياض","جدة","مكة","الدمام"],c:0,d:1},
@@ -717,8 +1051,42 @@ const Q = [
   {q:"ما عملة تونس؟",a:["الدينار","الريال","الدرهم","الليرة"],c:0,d:1},
   {q:"ما عملة ليبيا؟",a:["الدينار","الريال","الدرهم","الليرة"],c:0,d:1},
   {q:"ما عملة تركيا؟",a:["الليرة","اليورو","الدولار","الدينار"],c:0,d:1},
+  {q:"ما لون السماء في الليل؟",a:["أسود/مظلم","أزرق","أحمر","أخضر"],c:0,d:1},
+  {q:"كم عدد أضلاع المثلث؟",a:["3","4","5","6"],c:0,d:1},
+  {q:"ما هو الشكل الذي له 4 أضلاع متساوية؟",a:["المربع","المستطيل","المثلث","الدائرة"],c:0,d:1},
+  {q:"ما هو الكوكب الذي نعيش عليه؟",a:["الأرض","المريخ","الزهرة","عطارد"],c:0,d:1},
+  {q:"كم عدد فصول السنة؟",a:["4","3","5","6"],c:0,d:1},
+  {q:"ما هو الشهر الذي يأتي بعد يناير؟",a:["فبراير","مارس","أبريل","مايو"],c:0,d:1},
+  {q:"ما هو اليوم الذي يأتي بعد الجمعة؟",a:["السبت","الأحد","الخميس","الأربعاء"],c:0,d:1},
+  {q:"كم عدد أرجل الطاولة العادية؟",a:["4","3","5","6"],c:0,d:1},
+  {q:"ما هو اللون الناتج عن مزج الأحمر والأصفر؟",a:["البرتقالي","الأخضر","البنفسجي","البني"],c:0,d:1},
+  {q:"ما هو الحيوان الذي يصنع الشبكة؟",a:["العنكبوت","النحلة","النملة","الذبابة"],c:0,d:1},
+  {q:"كم عدد أجنحة الفراشة؟",a:["4","2","6","8"],c:0,d:1},
+  {q:"ما هو الشيء الذي نستخدمه لقياس الوقت؟",a:["الساعة","المسطرة","الميزان","الترمومتر"],c:0,d:1},
+  {q:"ما هو لون العشب؟",a:["أخضر","أصفر","أحمر","أزرق"],c:0,d:1},
+  {q:"كم عدد أصابع القدم؟",a:["5","4","6","3"],c:0,d:1},
+  {q:"ما هو الحيوان الذي يمشي ببطء شديد؟",a:["السلحفاة","الأرنب","الحصان","الكلب"],c:0,d:1},
+  {q:"ما هو الطائر الذي يغرد في الصباح؟",a:["العصفور","النسر","البومة","الصقر"],c:0,d:1},
+  {q:"كم عدد أيام شهر فبراير في السنة العادية؟",a:["28","29","30","31"],c:0,d:1},
+  {q:"ما هو الفصل الحار؟",a:["الصيف","الشتاء","الربيع","الخريف"],c:0,d:1},
+  {q:"ما هو الفصل البارد؟",a:["الشتاء","الصيف","الربيع","الخريف"],c:0,d:1},
+  {q:"ما هو لون الموز الناضج؟",a:["أصفر","أخضر","أحمر","برتقالي"],c:0,d:1},
+  {q:"كم عدد أرجل الدجاجة؟",a:["2","4","6","8"],c:0,d:1},
+  {q:"ما هو الحيوان الذي يبيض؟",a:["الدجاجة","البقرة","الخروف","الماعز"],c:0,d:1},
+  {q:"ما هو لون السماء عند الغروب؟",a:["برتقالي/أحمر","أزرق","أخضر","أسود"],c:0,d:1},
+  {q:"كم عدد أسابيع الشهر تقريباً؟",a:["4","3","5","6"],c:0,d:1},
+  {q:"ما هو الكوكب الذي له حلقات؟",a:["زحل","المشتري","أورانوس","نبتون"],c:0,d:1},
+  {q:"ما هو أكبر حيوان في الغابة؟",a:["الفيل","الأسد","النمر","الدب"],c:0,d:1},
+  {q:"ما هو الطائر الذي لا يطير؟",a:["البطريق","النسر","الصقر","الحمام"],c:0,d:1},
+  {q:"كم عدد أضلاع المربع؟",a:["4","3","5","6"],c:0,d:1},
+  {q:"ما هو لون الجزر؟",a:["برتقالي","أحمر","أصفر","أخضر"],c:0,d:1},
+  {q:"ما هو لون الكرنب؟",a:["أخضر","أحمر","أصفر","برتقالي"],c:0,d:1},
+  {q:"كم عدد أرجل النحلة؟",a:["6","4","8","10"],c:0,d:1},
+  {q:"ما هو الحيوان الذي له خرطوم طويل؟",a:["الفيل","الزرافة","الحصان","الجمل"],c:0,d:1},
+  {q:"ما هو الطائر الكبير الذي يعيش في القطب الجنوبي؟",a:["البطريق","النسر","البجع","اللقلق"],c:0,d:1},
+  {q:"كم عدد أشهر فصل الشتاء؟",a:["3","2","4","5"],c:0,d:1},
 
-  // المستوى 2 - سهل (€2,000 - €10,000)
+  // المستوى 2 - سهل (€2,000 - €10,000) - 120 سؤال
   {q:"من مخترع المصباح الكهربائي؟",a:["إديسون","نيوتن","أينشتاين","تسلا"],c:0,d:2},
   {q:"من هو أول خليفة في الإسلام؟",a:["أبو بكر","عمر","عثمان","علي"],c:0,d:2},
   {q:"كم عدد ركعات صلاة الفجر؟",a:["2","3","4","1"],c:0,d:2},
@@ -734,9 +1102,6 @@ const Q = [
   {q:"من مؤسس شركة فيسبوك؟",a:["مارك زوكربيرغ","بيل غيتس","ستيف جوبز","إيلون ماسك"],c:0,d:2},
   {q:"من مؤسس شركة جوجل؟",a:["لاري بيج وسيرجي برين","بيل غيتس","مارك زوكربيرغ","ستيف جوبز"],c:0,d:2},
   {q:"من مؤسس شركة تسلا؟",a:["إيلون ماسك","مارتن إيبرهارد","بيل غيتس","ستيف جوبز"],c:0,d:2},
-  {q:"من مؤسس شركة نتفليكس؟",a:["ريد هاستينغز","بيل غيتس","مارك زوكربيرغ","ستيف جوبز"],c:0,d:2},
-  {q:"من مؤسس شركة تويتر؟",a:["جاك دورسي","بيل غيتس","مارك زوكربيرغ","ستيف جوبز"],c:0,d:2},
-  {q:"من مؤسس شركة إنستغرام؟",a:["كيفن سيستروم","بيل غيتس","مارك زوكربيرغ","ستيف جوبز"],c:0,d:2},
   {q:"كم عدد ركعات صلاة المغرب؟",a:["3","2","4","1"],c:0,d:2},
   {q:"كم عدد ركعات صلاة العشاء؟",a:["4","3","2","5"],c:0,d:2},
   {q:"كم عدد ركعات صلاة الظهر؟",a:["4","3","2","5"],c:0,d:2},
@@ -774,16 +1139,79 @@ const Q = [
   {q:"ما عاصمة التشيك؟",a:["براغ","برنو","أوسترافا","بلزن"],c:0,d:2},
   {q:"ما عاصمة المجر؟",a:["بودابست","ديبريسين","سيجد","بيتش"],c:0,d:2},
   {q:"ما عاصمة رومانيا؟",a:["بوخارست","كلوج","تيميشوارا","ياش"],c:0,d:2},
+  {q:"من هو مؤلف كتاب 'البخلاء'؟",a:["الجاحظ","ابن قتيبة","ابن خلدون","المبرد"],c:0,d:2},
+  {q:"ما هو أطول نهر في أوروبا؟",a:["فولغا","الدانوب","الراين","الإلبه"],c:0,d:2},
+  {q:"ما هي أكبر دولة في العالم مساحة؟",a:["روسيا","كندا","الصين","الولايات المتحدة"],c:0,d:2},
+  {q:"ما هي أصغر دولة في العالم؟",a:["الفاتيكان","موناكو","سان مارينو","ليختنشتاين"],c:0,d:2},
+  {q:"كم عدد دول العالم تقريباً؟",a:["195","180","200","210"],c:0,d:2},
+  {q:"ما هو أعلى جبل في العالم؟",a:["إيفرست","كلمنجارو","مونت بلانك","ماكينلي"],c:0,d:2},
+  {q:"ما هي أكبر صحراء في العالم؟",a:["الصحراء الكبرى","القطب الجنوبي","غوبي","كالاهاري"],c:0,d:2},
+  {q:"ما هو أطول نهر في أفريقيا؟",a:["النيل","الكونغو","النيجر","زامبيزي"],c:0,d:2},
+  {q:"ما هي عاصمة اليابان؟",a:["طوكيو","أوساكا","كيوتو","يوكوهاما"],c:0,d:2},
+  {q:"ما هي عاصمة كوريا الجنوبية؟",a:["سيول","بوسان","إنتشون","دايغو"],c:0,d:2},
+  {q:"ما هي عاصمة الهند؟",a:["نيودلهي","مومباي","كولكاتا","تشيناي"],c:0,d:2},
+  {q:"ما هي عاصمة البرازيل؟",a:["برازيليا","ريو دي جانيرو","ساو باولو","سلفادور"],c:0,d:2},
+  {q:"ما هي عاصمة الأرجنتين؟",a:["بوينس آيرس","كوردوبا","روزاريو","مندوزا"],c:0,d:2},
+  {q:"ما هي عاصمة المكسيك؟",a:["مكسيكو سيتي","غوادالاخارا","مونتيري","كانكون"],c:0,d:2},
+  {q:"ما هي عاصمة جنوب أفريقيا التشريعية؟",a:["كيب تاون","بريتوريا","بلومفونتين","جوهانسبرغ"],c:0,d:2},
+  {q:"ما هي عاصمة نيجيريا؟",a:["أبوجا","لاغوس","كانو","إبادان"],c:0,d:2},
+  {q:"ما هي عاصمة كينيا؟",a:["نيروبي","مومباسا","كيسومو","ناكورو"],c:0,d:2},
+  {q:"ما هي عاصمة إثيوبيا؟",a:["أديس أبابا","ديري داوا","ميكيلي","غوندار"],c:0,d:2},
+  {q:"ما هي عاصمة تنزانيا؟",a:["دودوما","دار السلام","موانزا","أروشا"],c:0,d:2},
+  {q:"ما هي عاصمة غانا؟",a:["أكرا","كوماسي","تامالي","سيكوندي"],c:0,d:2},
+  {q:"ما هي عاصمة السنغال؟",a:["داكار","توبا","ثييس","زينشور"],c:0,d:2},
+  {q:"ما هي عاصمة المغرب؟",a:["الرباط","الدار البيضاء","مراكش","فاس"],c:0,d:2},
+  {q:"ما هي عاصمة الجزائر؟",a:["الجزائر","وهران","قسنطينة","عنابة"],c:0,d:2},
+  {q:"ما هي عاصمة السودان؟",a:["الخرطوم","أم درمان","بورتسودان","الأبيض"],c:0,d:2},
+  {q:"ما هي عاصمة الصومال؟",a:["مقديشو","هرجيسا","بيدوا","كسمايو"],c:0,d:2},
+  {q:"ما هي عاصمة جيبوتي؟",a:["جيبوتي","علي صبيح","تاجورة","أرتا"],c:0,d:2},
+  {q:"ما هي عاصمة موريتانيا؟",a:["نواكشوط","نواذيبو","روصو","كيهيدي"],c:0,d:2},
+  {q:"ما هي عاصمة مالي؟",a:["باماكو","سيكاسو","موبتي","تومبكتو"],c:0,d:2},
+  {q:"ما هي عاصمة النيجر؟",a:["نيامي","زيندر","تاهوا","أغاديز"],c:0,d:2},
+  {q:"ما هي عاصمة تشاد؟",a:["انجمينا","مندو","سار","بوكو"],c:0,d:2},
+  {q:"ما هي عاصمة الكاميرون؟",a:["ياوندي","دوالا","بامندا","غروا"],c:0,d:2},
+  {q:"ما هي عاصمة ساحل العاج؟",a:["ياموسوكرو","أبيدجان","بواكي","دالوا"],c:0,d:2},
+  {q:"ما هي عاصمة بوركينا فاسو؟",a:["واغادوغو","بوبو ديولاسو","كودوغو","بانفورا"],c:0,d:2},
+  {q:"ما هي عاصمة غينيا؟",a:["كوناكري","كانكان","بوكي","نزيريكوري"],c:0,d:2},
+  {q:"ما هي عاصمة سيراليون؟",a:["فريتاون","بو","كينما","ماكيني"],c:0,d:2},
+  {q:"ما هي عاصمة ليبيريا؟",a:["مونروفيا","غبارنغا"," Buchanan","زويدرو"],c:0,d:2},
+  {q:"ما هي عاصمة توغو؟",a:["لومي","سوكودي","كارا","أتاكبامي"],c:0,d:2},
+  {q:"ما هي عاصمة بنين؟",a:["بورتو نوفو","كوتونو","أبومي","باراكو"],c:0,d:2},
+  {q:"ما هي عاصمة الغابون؟",a:["ليبرفيل","بورت جنتيل","فرانسفيل","أويندو"],c:0,d:2},
+  {q:"ما هي عاصمة الكونغو؟",a:["برازافيل","بوينت نوار","دوليزي","نكاي"],c:0,d:2},
+  {q:"ما هي عاصمة الكونغو الديمقراطية؟",a:["كينشاسا","لوبومباشي","مبوجي مايي","كانانغا"],c:0,d:2},
+  {q:"ما هي عاصمة أنغولا؟",a:["لواندا","هوامبو","لوبانغو","بنغيلا"],c:0,d:2},
+  {q:"ما هي عاصمة زامبيا؟",a:["لوساكا","ندولا","كيتوي","ليفينغستون"],c:0,d:2},
+  {q:"ما هي عاصمة زيمبابوي؟",a:["هراري","بولاوايو","تشينهوي","غويرو"],c:0,d:2},
+  {q:"ما هي عاصمة موزمبيق؟",a:["مابوتو","ماتولا","بيرا","نامبولا"],c:0,d:2},
+  {q:"ما هي عاصمة مدغشقر؟",a:["أنتاناناريفو","تواماسينا","ماهاجانغا","فياوانتسوا"],c:0,d:2},
+  {q:"ما هي عاصمة موريشيوس؟",a:["بورت لويس","بوكو روز","كوريبيب","فاسين"],c:0,d:2},
+  {q:"ما هي عاصمة سيشل؟",a:["فيكتوريا","أنس بويلو","بيل أومبر","غران أنس"],c:0,d:2},
+  {q:"ما هي عاصمة جزر القمر؟",a:["موروني","موتسامودو","فومبوني","دوموني"],c:0,d:2},
+  {q:"ما هي عاصمة الرأس الأخضر؟",a:["برايا","منديلو","سانتا ماريا","أسوماذا"],c:0,d:2},
+  {q:"ما هي عاصمة ساو تومي وبرينسيب؟",a:["ساو تومي","ترينداد","غوادالوبي","نفيش"],c:0,d:2},
+  {q:"ما هي عاصمة غينيا الاستوائية؟",a:["مالابو","باتا","إيبيبين","إيبيبي"],c:0,d:2},
+  {q:"ما هي عاصمة رواندا؟",a:["كيغالي","بوتاري","غيسيني","روهنغيري"],c:0,d:2},
+  {q:"ما هي عاصمة بوروندي؟",a:["جيتيغا","بوجمبورا","مورامفيا","رويانغي"],c:0,d:2},
+  {q:"ما هي عاصمة أوغندا؟",a:["كامبالا","جينجا","مبارارا","غولو"],c:0,d:2},
+  {q:"ما هي عاصمة ملاوي؟",a:["ليلونغوي","بلانتاير","مزوزو","زومبا"],c:0,d:2},
+  {q:"ما هي عاصمة ليسوتو؟",a:["ماسيرو","مافيتنغ","ليريب","موهاليس هوك"],c:0,d:2},
+  {q:"ما هي عاصمة سوازيلاند؟",a:["مبابان","مانزيني"," Siteki","Big Bend"],c:0,d:2},
+  {q:"ما هي عاصمة بوتسوانا؟",a:["غابورون","فرانسيس تاون","مابوبوني","سيليب-بيكوي"],c:0,d:2},
+  {q:"ما هي عاصمة ناميبيا؟",a:["ويندهوك","والبس باي","سواكوبموند","أوتجوارونغو"],c:0,d:2},
+  {q:"ما هي عاصمة جنوب أفريقيا الإدارية؟",a:["بريتوريا","كيب تاون","بلومفونتين","جوهانسبرغ"],c:0,d:2},
+  {q:"ما هي عاصمة ليبيا؟",a:["طرابلس","بنغازي","مصراتة","سبها"],c:0,d:2},
+  {q:"ما هي عاصمة الجزائر؟",a:["الجزائر","وهران","قسنطينة","عنابة"],c:0,d:2},
+  {q:"ما هي عاصمة تونس؟",a:["تونس","صفاقس","سوسة","القيروان"],c:0,d:2},
+  {q:"ما هي عاصمة موريتانيا؟",a:["نواكشوط","نواذيبو","روصو","كيهيدي"],c:0,d:2},
 
-  // المستوى 3 - متوسط (€20,000 - €100,000)
+  // المستوى 3 - متوسط (€20,000 - €100,000) - 120 سؤال
   {q:"في أي عام هبط أول إنسان على القمر؟",a:["1969","1972","1965","1959"],c:0,d:3},
   {q:"من مؤلف رواية 'البؤساء'؟",a:["فيكتور هوغو","تشارلز ديكنز","دوستويفسكي","تولستوي"],c:0,d:3},
-  {q:"ما أصغر دولة في العالم؟",a:["الفاتيكان","موناكو","سان مارينو","ليختنشتاين"],c:0,d:3},
   {q:"من مخترع المحرك البخاري؟",a:["جيمس واط","نيوتن","إديسون","تسلا"],c:0,d:3},
   {q:"ما العنصر الكيميائي رمزه O؟",a:["الأكسجين","الذهب","الفضة","الحديد"],c:0,d:3},
   {q:"كم عدد عظام جسم الإنسان البالغ؟",a:["206","208","210","200"],c:0,d:3},
   {q:"من مؤلف 'مقدمة ابن خلدون'؟",a:["ابن خلدون","ابن رشد","ابن سينا","الفارابي"],c:0,d:3},
-  {q:"ما أكبر صحراء في العالم؟",a:["القطب الجنوبي","الصحراء الكبرى","غوبي","أنتاركتيكا"],c:0,d:3},
   {q:"من النبي الذي أُعطي القرآن؟",a:["محمد","موسى","عيسى","إبراهيم"],c:0,d:3},
   {q:"كم عدد عظام الجمجمة في الإنسان؟",a:["22","20","24","26"],c:0,d:3},
   {q:"كم عدد الكروموسومات في جسم الإنسان؟",a:["46","44","48","42"],c:0,d:3},
@@ -831,7 +1259,6 @@ const Q = [
   {q:"ما العنصر رمزه Na؟",a:["الصوديوم","البوتاسيوم","الكالسيوم","المغنيسيوم"],c:0,d:3},
   {q:"ما العنصر رمزه K؟",a:["البوتاسيوم","الصوديوم","الكالسيوم","المغنيسيوم"],c:0,d:3},
   {q:"ما العنصر رمزه Ca؟",a:["الكالسيوم","الصوديوم","البوتاسيوم","المغنيسيوم"],c:0,d:3},
-  {q:"من مؤلف كتاب 'البخلاء'؟",a:["الجاحظ","ابن قتيبة","ابن خلدون","المبرد"],c:0,d:3},
   {q:"من مؤلف كتاب 'الخطباء'؟",a:["الجاحظ","ابن قتيبة","ابن خلدون","المبرد"],c:0,d:3},
   {q:"من مؤلف كتاب 'الحيوان'؟",a:["الجاحظ","ابن قتيبة","ابن خلدون","المسعودي"],c:0,d:3},
   {q:"من مؤلف كتاب 'البيان والتبيين'؟",a:["الجاحظ","ابن قتيبة","ابن خلدون","المبرد"],c:0,d:3},
@@ -844,11 +1271,62 @@ const Q = [
   {q:"من مؤلف 'الحب في زمن الكوليرا'؟",a:["غابرييل غارسيا ماركيز","ماريو بارغاس يوسا","إيزابيل الليندي","بورخيس"],c:0,d:3},
   {q:"ما أطول نهر في أمريكا الجنوبية؟",a:["الأمازون","بارانا","أورينوكو","ساو فرانسيسكو"],c:0,d:3},
   {q:"ما أطول نهر في آسيا؟",a:["اليانغتسي","الميكونغ","الغانج","النهر الأصفر"],c:0,d:3},
-  {q:"ما أطول نهر في أوروبا؟",a:["فولغا","الدانوب","الراين","الإلبه"],c:0,d:3},
   {q:"ما أطول نهر في أستراليا؟",a:["موراي","دارلينغ","مورومبيجي","لاكلان"],c:0,d:3},
   {q:"ما أطول نهر في كندا؟",a:["ماكنزي","سانت لورانس","يوكون","نيلسون"],c:0,d:3},
+  {q:"ما هي عاصمة نيوزيلندا؟",a:["ولينغتون","أوكلاند","كرايستشيرش","هاميلتون"],c:0,d:3},
+  {q:"ما هي عاصمة الفلبين؟",a:["مانيلا","سيبو","دافاو","كيزون"],c:0,d:3},
+  {q:"ما هي عاصمة إندونيسيا؟",a:["جاكرتا","سورابايا","باندونغ","ميدان"],c:0,d:3},
+  {q:"ما هي عاصمة ماليزيا؟",a:["كوالالمبور","جورج تاون","جوهور باهرو","إيبوه"],c:0,d:3},
+  {q:"ما هي عاصمة سنغافورة؟",a:["سنغافورة","وودلاندز","تامبينس","جورونغ"],c:0,d:3},
+  {q:"ما هي عاصمة تايلاند؟",a:["بانكوك","تشيانغ ماي","فوكيت","باتايا"],c:0,d:3},
+  {q:"ما هي عاصمة فيتنام؟",a:["هانوي","هو تشي منه","هاي فونغ","دا نانغ"],c:0,d:3},
+  {q:"ما هي عاصمة كمبوديا؟",a:["بنوم بنه","سييم ريب","باتامبانغ","كمبوت"],c:0,d:3},
+  {q:"ما هي عاصمة لاوس؟",a:["فيينتيان","لوانغ برابانغ","سافاناكيت","باكسي"],c:0,d:3},
+  {q:"ما هي عاصمة ميانمار؟",a:["نايبيداو","يانغون","ماندالاي","باغان"],c:0,d:3},
+  {q:"ما هي عاصمة بنغلاديش؟",a:["دكا","شيتاغونغ","خولنا","راجشاهي"],c:0,d:3},
+  {q:"ما هي عاصمة سريلانكا؟",a:["سري جاياواردنابورا كوتي","كولومبو","كاندي","غال"],c:0,d:3},
+  {q:"ما هي عاصمة نيبال؟",a:["كاتماندو","بوكهارا","لاليتبور","بهاراتبور"],c:0,d:3},
+  {q:"ما هي عاصمة بوتان؟",a:["ثيمفو","بارو","بوناخا","بونتسولينغ"],c:0,d:3},
+  {q:"ما هي عاصمة مالديف؟",a:["ماليه","أدو","فوليدو","كولوفوشي"],c:0,d:3},
+  {q:"ما هي عاصمة أفغانستان؟",a:["كابول","قندهار","هرات","مزار شريف"],c:0,d:3},
+  {q:"ما هي عاصمة باكستان؟",a:["إسلام آباد","كراتشي","لاهور","فيصل آباد"],c:0,d:3},
+  {q:"ما هي عاصمة إيران؟",a:["طهران","أصفهان","شيراز","تبريز"],c:0,d:3},
+  {q:"ما هي عاصمة أوزبكستان؟",a:["طشقند","سمرقند","بخارى","نامانغان"],c:0,d:3},
+  {q:"ما هي عاصمة كازاخستان؟",a:["أستانا","ألماتي","شيمكنت","كاراغاندا"],c:0,d:3},
+  {q:"ما هي عاصمة قيرغيزستان؟",a:["بيشكك","أوش","جالال أباد","كاراكول"],c:0,d:3},
+  {q:"ما هي عاصمة طاجيكستان؟",a:["دوشنبه","خوجاند","كولوب","إستارافشان"],c:0,d:3},
+  {q:"ما هي عاصمة تركمانستان؟",a:["عشق آباد","تركمن أباد","مرو","بلخان أباد"],c:0,d:3},
+  {q:"ما هي عاصمة أذربيجان؟",a:["باكو","غانجا","سومغاييت","مينغتشيفير"],c:0,d:3},
+  {q:"ما هي عاصمة أرمينيا؟",a:["يريفان","غومري","فانادزور","فاغارشابات"],c:0,d:3},
+  {q:"ما هي عاصمة جورجيا؟",a:["تبليسي","كوتايسي","باتومي","روستافي"],c:0,d:3},
+  {q:"ما هي عاصمة أوكرانيا؟",a:["كييف","خاركيف","أوديسا","دنيبرو"],c:0,d:3},
+  {q:"ما هي عاصمة بيلاروسيا؟",a:["مينسك","غوميل","موغيليف","فيتبسك"],c:0,d:3},
+  {q:"ما هي عاصمة مولدوفا؟",a:["كيشيناو","تيراسبول","بيلتسي","بيندر"],c:0,d:3},
+  {q:"ما هي عاصمة ألبانيا؟",a:["تيرانا","دوريس","فلوره","إيلباصان"],c:0,d:3},
+  {q:"ما هي عاصمة صربيا؟",a:["بلغراد","نوفى ساد","نيش","كراغوييفاتس"],c:0,d:3},
+  {q:"ما هي عاصمة كرواتيا؟",a:["زغرب","سبليت","رييكا","أوسييك"],c:0,d:3},
+  {q:"ما هي عاصمة البوسنة؟",a:["سراييفو","بانيا لوكا","توزلا","زينيكا"],c:0,d:3},
+  {q:"ما هي عاصمة الجبل الأسود؟",a:["بودغوريتسا","نيكشيتش","بلجينا","تيفات"],c:0,d:3},
+  {q:"ما هي عاصمة مقدونيا الشمالية؟",a:["سكوبيه","بيتولا","كومانوفو","بريليب"],c:0,d:3},
+  {q:"ما هي عاصمة كوسوفو؟",a:["بريشتينا","بريزرن","غياكوفيتسا","بيخ"],c:0,d:3},
+  {q:"ما هي عاصمة سلوفينيا؟",a:["ليوبليانا","ماريبور","تسيلي","كراني"],c:0,d:3},
+  {q:"ما هي عاصمة سلوفاكيا؟",a:["براتيسلافا","كوشيتسه","بريشوف","جيلينا"],c:0,d:3},
+  {q:"ما هي عاصمة إستونيا؟",a:["تالين","تارتو","نارفا","بارنو"],c:0,d:3},
+  {q:"ما هي عاصمة لاتفيا؟",a:["ريغا","داوغافبيلس","ليباجا","يلغافا"],c:0,d:3},
+  {q:"ما هي عاصمة ليتوانيا؟",a:["فيلنيوس","كاوناس","كلايبيدا","شاولياي"],c:0,d:3},
+  {q:"ما هي عاصمة أيرلندا؟",a:["دبلن","كورك","غالواي","ليمريك"],c:0,d:3},
+  {q:"ما هي عاصمة آيسلندا؟",a:["ريكيافيك","كوبافوغور","هافنارفيوردور","أكوريري"],c:0,d:3},
+  {q:"ما هي عاصمة مالطا؟",a:["فاليتا","بيرا","سنجليا","كوسبيكو"],c:0,d:3},
+  {q:"ما هي عاصمة قبرص؟",a:["نيقوسيا","ليماسول","لارنكا","فاماغوستا"],c:0,d:3},
+  {q:"ما هي عاصمة لوكسمبورغ؟",a:["لوكسمبورغ","إيش سور ألزيت","ديكيرش","إيتلبروك"],c:0,d:3},
+  {q:"ما هي عاصمة ليختنشتاين؟",a:["فادوز","شاني","تريسين","بالزرس"],c:0,d:3},
+  {q:"ما هي عاصمة موناكو؟",a:["موناكو","مونت كارلو","لا كوندامين","فونفييل"],c:0,d:3},
+  {q:"ما هي عاصمة أندورا؟",a:["أندورا لا فيلا","إنكانب","لا ماسانا","سانت جوليا"],c:0,d:3},
+  {q:"ما هي عاصمة سان مارينو؟",a:["سان مارينو","بورغو ماجيوري","سيرافالي","دوغانا"],c:0,d:3},
+  {q:"ما هي عاصمة الفاتيكان؟",a:["الفاتيكان","روما","ميلانو","نابولي"],c:0,d:3},
+  {q:"ما هي عاصمة أندورا؟",a:["أندورا لا فيلا","إنكانب","لا ماسانا","سانت جوليا"],c:0,d:3},
 
-  // المستوى 4 - صعب (€250,000 - €500,000)
+  // المستوى 4 - صعب (€250,000 - €500,000) - 120 سؤال
   {q:"في أي عام سقطت غرناطة؟",a:["1492","1453","1500","1475"],c:0,d:4},
   {q:"من مؤسس الدولة الأموية؟",a:["معاوية بن أبي سفيان","عبد الملك بن مروان","هشام بن عبد الملك","مروان بن الحكم"],c:0,d:4},
   {q:"ما أطول سورة في القرآن؟",a:["البقرة","آل عمران","النساء","المائدة"],c:0,d:4},
@@ -959,8 +1437,18 @@ const Q = [
   {q:"من مؤلف 'تاريخ اليعقوبي'؟",a:["اليعقوبي","الطبري","ابن الأثير","المسعودي"],c:0,d:4},
   {q:"من مؤلف 'البدية والتاريخ'؟",a:["ابن كثير","الطبري","ابن الأثير","المسعودي"],c:0,d:4},
   {q:"من مؤلف 'المنتظم'؟",a:["ابن الجوزي","الطبري","ابن الأثير","المسعودي"],c:0,d:4},
+  {q:"ما هو أطول نهر في العالم؟",a:["النيل","الأمازون","المسيسيبي","اليانغتسي"],c:0,d:4},
+  {q:"ما هي أكبر دولة في العالم من حيث عدد السكان؟",a:["الصين","الهند","الولايات المتحدة","إندونيسيا"],c:0,d:4},
+  {q:"من هو أول من مشى على سطح القمر؟",a:["نيل أرمسترونغ","باز ألدرين","يوري غاغارين","جون غلين"],c:0,d:4},
+  {q:"في أي عام اندلعت الحرب العالمية الأولى؟",a:["1914","1918","1939","1945"],c:0,d:4},
+  {q:"في أي عام انتهت الحرب العالمية الثانية؟",a:["1945","1944","1946","1943"],c:0,d:4},
+  {q:"ما هي عاصمة أستراليا؟",a:["كانبرا","سيدني","ملبورن","بريزبن"],c:0,d:4},
+  {q:"ما هي عملة سويسرا؟",a:["الفرنك السويسري","اليورو","الدولار","الجنيه"],c:0,d:4},
+  {q:"ما هي أكبر جزيرة في العالم؟",a:["جرينلاند","مدغشقر","بورنيو","سومطرة"],c:0,d:4},
+  {q:"من هو مخترع الطباعة؟",a:["غوتنبرغ","إديسون","تسلا","بيل"],c:0,d:4},
+  {q:"ما هو أطول نهر في الصين؟",a:["اليانغتسي","النهر الأصفر","الميكونغ","السيانغ"],c:0,d:4},
 
-  // المستوى 5 - صعب جداً (€1,000,000)
+  // المستوى 5 - صعب جداً (€1,000,000) - 120 سؤال
   {q:"من الخليفة الأموي الذي بنى قبة الصخرة؟",a:["عبد الملك بن مروان","الوليد بن عبد الملك","هشام بن عبد الملك","معاوية"],c:0,d:5},
   {q:"ما أقدم كتاب في النحو العربي؟",a:["الكتاب لسيبويه","أوضح المسالك","مغني اللبيب","شرح ابن عقيل"],c:0,d:5},
   {q:"في أي عام فُتحت القسطنطينية؟",a:["1453","1492","1400","1500"],c:0,d:5},
@@ -1041,7 +1529,7 @@ const Q = [
   {q:"ما أقدم حضارة في أفريقيا الوسطى؟",a:["البايا","الباندا","المانجبيتو","الأزاندي"],c:0,d:5},
   {q:"ما أول خط حديد في النيجر؟",a:["نيامي-دوزو","نيامي-زيندر","نيامي-تاهوا","نيامي-أغاديز"],c:0,d:5},
   {q:"ما أقدم حضارة في مالي؟",a:["البمبرة","المالينكية","السونغاي","التوارق"],c:0,d:5},
-  {q:"ما أول خط حديد في بوركينا فاسو؟",a:["واغادوغو-أبيدجان","واغادوغو-بобо ديولاسو","واغادوغو-كودوغو","واغادوغو-بانفورا"],c:0,d:5},
+  {q:"ما أول خط حديد في بوركينا فاسو؟",a:["واغادوغو-أبيدجان","واغادوغو-بوبو ديولاسو","واغادوغو-كودوغو","واغادوغو-بانفورا"],c:0,d:5},
   {q:"ما أقدم حضارة في ساحل العاج؟",a:["الباولي","البيتي","السنوفو","الماند"],c:0,d:5},
   {q:"ما أول خط حديد في غانا؟",a:["أكرا-كوماسي","كوماسي-تاكورادي","أكرا-سيكوندي","كوماسي-تامالي"],c:0,d:5},
   {q:"ما أقدم حضارة في ليبيريا؟",a:["الكرو","الماندينغو","الغريبو","المان"],c:0,d:5},
@@ -1097,7 +1585,7 @@ const Q = [
   {q:"ما أقدم حضارة في النرويج؟",a:["الفايكنغية","السامية","النرويجية","الجرمانية"],c:0,d:5},
   {q:"ما أول خط حديد في السويد؟",a:["ستوكهولم-سودرتاليا","غوتنبرغ-يونشوبينغ","مالمو-تيريلبورغ","أوبسالا-فالنونا"],c:0,d:5},
   {q:"ما أقدم حضارة في فنلندا؟",a:["الفنلندية","السامية","الجرمانية","السلافية"],c:0,d:5},
-  {q:"ما أول خط حديد في فنلندا؟",a:["هلسنكي-هامينلينا","هلسنكي-توركو","هلسنكي-تامبيري","هلسنكي-لاhti"],c:0,d:5},
+  {q:"ما أول خط حديد في فنلندا؟",a:["هلسنكي-هامينلينا","هلسنكي-توركو","هلسنكي-تامبيري","هلسنكي-لاهتي"],c:0,d:5},
   {q:"ما أقدم حضارة في آيسلندا؟",a:["النورسية","الآيسلندية","السلتية","الفايكنغية"],c:0,d:5},
   {q:"ما أول خط حديد في آيسلندا؟",a:["لا يوجد","ريكيافيك-كيفلافيك","ريكيافيك-أكوريري","ريكيافيك-سلفوس"],c:0,d:5},
   {q:"ما أقدم حضارة في أيرلندا؟",a:["الغيلية","الكلتية","الفايكنغية","الأنجلو-نورماندية"],c:0,d:5},
@@ -1157,9 +1645,9 @@ const MILESTONES = [1000,32000];
 
 /* ====================== الحالة ====================== */
 let S = {
-  name:'',theme:'original',qIdx:0,score:0,guaranteed:0,
+  name:'',qIdx:0,score:0,guaranteed:0,
   questions:[],helpers:{fifty:true,phone:true,audience:true},
-  timer:null,timeLeft:30,soundOn:true,eliminated:[]
+  timer:null,timeLeft:60,soundOn:true,eliminated:[]
 };
 
 /* ====================== الأصوات ====================== */
@@ -1182,9 +1670,21 @@ const sndClick=()=>tone(800,0.05);
 const sndTick=()=>tone(1000,0.03);
 
 /* ====================== تنسيق الأرقام ====================== */
-function fmtNum(n){
-  // أرقام إنجليزية مع فواصل
-  return n.toLocaleString('en-US');
+function fmtNum(n){return n.toLocaleString('en-US')}
+
+/* ====================== Toast Notifications ====================== */
+function showToast(msg,type='info',icon='fa-info-circle'){
+  const container=document.getElementById('toastContainer');
+  const toast=document.createElement('div');
+  toast.className=`toast ${type}`;
+  toast.innerHTML=`<i class="fas ${icon} toast-icon"></i><span class="toast-msg">${msg}</span>`;
+  container.appendChild(toast);
+  setTimeout(()=>toast.classList.add('show'),10);
+  setTimeout(()=>{
+    toast.style.opacity='0';
+    toast.style.transform='translateY(-100px)';
+    setTimeout(()=>toast.remove(),300);
+  },2500);
 }
 
 /* ====================== تحميل الأسئلة ====================== */
@@ -1213,25 +1713,17 @@ function showScreen(id){
 function openModal(id){document.getElementById(id).classList.add('show')}
 function closeModal(id){document.getElementById(id).classList.remove('show')}
 
-/* ====================== الثيم ====================== */
-function setTheme(t){
-  document.body.setAttribute('data-theme',t);
-  S.theme=t;
-  localStorage.setItem('wm_theme',t);
-  document.querySelectorAll('.theme-circle').forEach(d=>d.classList.toggle('active',d.dataset.t===t));
-}
-
 /* ====================== سلم الجوائز ====================== */
 function renderLadder(){
   const l=document.getElementById('ladder');
   l.innerHTML='';
   for(let i=PRIZES.length-1;i>=0;i--){
     const d=document.createElement('div');
-    d.className='prize-row';
+    d.className='prize-item';
     if(MILESTONES.includes(PRIZES[i])) d.classList.add('milestone');
     if(i===S.qIdx) d.classList.add('current');
     else if(i<S.qIdx) d.classList.add('passed');
-    d.innerHTML=`<span class="num">${i+1}</span><span class="amt">€${fmtNum(PRIZES[i])}</span>`;
+    d.innerHTML=`<span class="p-num">${i+1}</span><span class="p-amt">€${fmtNum(PRIZES[i])}</span>`;
     l.appendChild(d);
   }
   const cur=l.querySelector('.current');
@@ -1253,33 +1745,33 @@ function renderQ(){
   const letters=['A','B','C','D'];
   q.a.forEach((ans,i)=>{
     const b=document.createElement('button');
-    b.className='answer';
+    b.className='answer-btn';
     b.innerHTML=`<span class="letter">${letters[i]}</span><span>${ans}</span>`;
     b.onclick=()=>selectA(i);
     c.appendChild(b);
   });
   
-  // حركات Anime.js
+  // حركات سريعة ومتناسقة
   anime({
     targets:'#questionText',
     opacity:[0,1],
     translateY:[20,0],
-    duration:700,
-    easing:'easeOutExpo'
+    duration:400,
+    easing:'easeOutQuad'
   });
   anime({
-    targets:'.answer',
+    targets:'.answer-btn',
     opacity:[0,1],
     scale:[0.8,1],
-    delay:anime.stagger(120,{start:200}),
-    duration:600,
-    easing:'easeOutBack'
+    delay:anime.stagger(80,{start:100}),
+    duration:300,
+    easing:'easeOutQuad'
   });
   anime({
-    targets:'#ladder .prize-row.current',
-    scale:[0.9,1.05],
+    targets:'.prize-item.current',
+    scale:[0.5,1.08],
     duration:500,
-    easing:'easeOutElastic(1, .6)'
+    easing:'easeOutElastic(1, .8)'
   });
   
   renderLadder();
@@ -1290,41 +1782,65 @@ function renderQ(){
 /* ====================== المؤقت ====================== */
 function startTimer(){
   clearInterval(S.timer);
-  S.timeLeft=30;
+  S.timeLeft=60;
   updateTimer();
   S.timer=setInterval(()=>{
     S.timeLeft--;
     updateTimer();
-    if(S.timeLeft<=5 && S.timeLeft>0) sndTick();
+    if(S.timeLeft<=10 && S.timeLeft>0) sndTick();
     if(S.timeLeft<=0){clearInterval(S.timer);timeOut()}
   },1000);
 }
 function updateTimer(){
-  const circ=150.8;
-  const off=circ*(1-S.timeLeft/30);
-  const fg=document.getElementById('timerFg');
+  const circle=document.getElementById('timerCircle');
   const num=document.getElementById('timerNum');
-  fg.style.strokeDashoffset=off;
+  const pct=(S.timeLeft/60)*100;
+  
+  // تحديد اللون والظل حسب الوقت
+  let color='#555'; // رمادي
+  let glow='rgba(100,100,100,0.4)';
+  
+  if(S.timeLeft<=10){
+    color='#e74c3c'; // أحمر
+    glow='rgba(231,76,60,0.8)';
+    circle.classList.add('danger');
+  }else if(S.timeLeft<=20){
+    color='#e67e22'; // برتقالي
+    glow='rgba(230,126,34,0.7)';
+    circle.classList.remove('danger');
+  }else if(S.timeLeft<=40){
+    color='#f39c12'; // أصفر برتقالي
+    glow='rgba(243,156,18,0.6)';
+    circle.classList.remove('danger');
+  }else{
+    circle.classList.remove('danger');
+  }
+  
+  circle.style.setProperty('--timer-color',color);
+  circle.style.setProperty('--timer-pct',pct+'%');
+  circle.style.setProperty('--timer-glow',glow);
   num.textContent=S.timeLeft;
-  const danger=S.timeLeft<=5;
-  fg.classList.toggle('danger',danger);
-  num.classList.toggle('danger',danger);
+  num.style.color=color;
 }
-function timeOut(){sndWrong();endGame(false,'انتهى الوقت!')}
+function timeOut(){
+  sndWrong();
+  showToast('انتهى الوقت!','error','fa-clock');
+  endGame(false,'انتهى الوقت!');
+}
 
 /* ====================== اختيار الإجابة ====================== */
 function selectA(i){
   clearInterval(S.timer);
-  const btns=document.querySelectorAll('.answer');
+  const btns=document.querySelectorAll('.answer-btn');
   btns.forEach(b=>b.disabled=true);
   btns[i].classList.add('selected');
   sndClick();
   
-  // حركة التحديد
+  // حركة سريعة
   anime({
     targets:btns[i],
     scale:[1,1.05,1],
-    duration:600,
+    duration:400,
     easing:'easeInOutQuad'
   });
   
@@ -1336,46 +1852,98 @@ function selectA(i){
       sndCorrect();
       S.score=PRIZES[S.qIdx];
       if(MILESTONES.includes(S.score)) S.guaranteed=S.score;
-      confetti();
+      launchStars();
+      showToast('إجابة صحيحة! 🎉','success','fa-check-circle');
       anime({
         targets:btns[i],
         scale:[1,1.1,1],
-        duration:800,
+        duration:500,
         easing:'easeInOutQuad'
       });
+      btns.forEach((b,idx)=>{
+        if(idx!==i){
+          anime({
+            targets:b,
+            opacity:[1,0.3],
+            scale:[1,0.9],
+            duration:300,
+            delay:idx*50,
+            easing:'easeOutQuad'
+          });
+        }
+      });
       setTimeout(()=>{
-        if(S.qIdx>=14) endGame(true);
-        else{S.qIdx++;renderQ()}
-      },1800);
+        if(S.qIdx>=14){
+          showToast('مبروك! ربحت المليون! ','success','fa-trophy');
+          endGame(true);
+        }else{
+          S.qIdx++;
+          renderQ();
+        }
+      },1500);
     }else{
       btns[i].classList.remove('selected');
       btns[i].classList.add('wrong');
       btns[q.c].classList.add('correct');
       sndWrong();
+      showToast('إجابة خاطئة!','error','fa-times-circle');
       anime({
         targets:btns[i],
-        translateX:[-10,10,-10,0],
-        duration:500,
+        translateX:[-8,8,-8,0],
+        duration:400,
         easing:'easeInOutQuad'
       });
       setTimeout(()=>endGame(false),2000);
     }
-  },1800);
+  },1500);
+}
+
+/* ====================== إطلاق النجوم المضيئة ====================== */
+function launchStars(){
+  const colors=['#2ecc71','#27ae60','#fff','#1abc9c','#16a085'];
+  const centerX=window.innerWidth/2;
+  const centerY=window.innerHeight/2;
+  
+  for(let i=0;i<40;i++){
+    const star=document.createElement('div');
+    star.className='star';
+    const size=Math.random()*20+10;
+    star.style.width=size+'px';
+    star.style.height=size+'px';
+    star.style.left=centerX+'px';
+    star.style.top=centerY+'px';
+    star.style.fontSize=size+'px';
+    star.style.color=colors[Math.floor(Math.random()*colors.length)];
+    document.body.appendChild(star);
+    
+    const angle=(Math.PI*2*i)/40;
+    const distance=Math.random()*300+200;
+    const x=Math.cos(angle)*distance;
+    const y=Math.sin(angle)*distance;
+    
+    anime({
+      targets:star,
+      left:centerX+x,
+      top:centerY+y,
+      opacity:[1,0],
+      scale:[1,0.3],
+      rotate:Math.random()*720,
+      duration:1500+Math.random()*500,
+      easing:'easeOutQuad',
+      complete:()=>star.remove()
+    });
+  }
 }
 
 /* ====================== وسائل المساعدة ====================== */
 function updateHelpers(){
-  document.getElementById('help5050').disabled=!S.helpers.fifty;
-  document.getElementById('helpPhone').disabled=!S.helpers.phone;
-  document.getElementById('helpAudience').disabled=!S.helpers.audience;
   ['help5050','helpPhone','helpAudience'].forEach(id=>{
     const key=id.replace('help','').toLowerCase();
-    const map={fifty:'fifty',phone:'phone',audience:'audience'};
     const btn=document.getElementById(id);
-    const used=btn.querySelector('.used');
-    if(!S.helpers[map[key]] && !used){
+    const used=btn.querySelector('.used-mark');
+    if(!S.helpers[key] && !used){
       const u=document.createElement('span');
-      u.className='used';
+      u.className='used-mark';
       u.innerHTML='<i class="fas fa-times"></i>';
       btn.appendChild(u);
     }
@@ -1386,21 +1954,22 @@ function use5050(){
   if(!S.helpers.fifty) return;
   S.helpers.fifty=false;
   sndClick();
+  showToast('تم حذف إجابتين','info','fa-divide');
   const q=S.questions[S.qIdx];
   const wrong=[0,1,2,3].filter(i=>i!==q.c).sort(()=>Math.random()-0.5).slice(0,2);
-  const btns=document.querySelectorAll('.answer');
+  const btns=document.querySelectorAll('.answer-btn');
   wrong.forEach((i,idx)=>{
     setTimeout(()=>{
       btns[i].classList.add('eliminated');
       S.eliminated.push(i);
       anime({
         targets:btns[i],
-        opacity:[1,0.25],
-        scale:[1,0.95],
-        duration:500,
+        opacity:[1,0.2],
+        scale:[1,0.9],
+        duration:300,
         easing:'easeOutQuad'
       });
-    },idx*400);
+    },idx*200);
   });
   updateHelpers();
 }
@@ -1415,8 +1984,8 @@ function usePhone(){
   const guess=isCorrect?q.c:available[Math.floor(Math.random()*available.length)];
   const letters=['A','B','C','D'];
   const text=isCorrect
-    ?`أنا متأكد بنسبة كبيرة أن الإجابة هي: <b style="color:#ffd700">${letters[guess]} - ${q.a[guess]}</b>`
-    :`أعتقد أن الإجابة قد تكون: <b style="color:#ffd700">${letters[guess]} - ${q.a[guess]}</b> لكن لست متأكداً`;
+    ?`أنا متأكد بنسبة كبيرة أن الإجابة هي: <b style="color:#333">${letters[guess]} - ${q.a[guess]}</b>`
+    :`أعتقد أن الإجابة قد تكون: <b style="color:#333">${letters[guess]} - ${q.a[guess]}</b> لكن لست متأكداً`;
   document.getElementById('phoneText').innerHTML=text;
   openModal('phoneModal');
   updateHelpers();
@@ -1458,40 +2027,19 @@ function useAudience(){
 
 function quitGame(){
   if(S.qIdx===0){
-    if(confirm('هل تريد الانسحاب بدون أي مبلغ؟')) endGame(true);
-  }else{
-    if(confirm(`هل تريد الانسحاب بمبلغ €${fmtNum(S.guaranteed)}؟`)) endGame(true);
+    showToast('لا يمكن الانسحاب قبل الإجابة على سؤال واحد','info','fa-info-circle');
+    return;
   }
-}
-
-/* ====================== الاحتفال ====================== */
-function confetti(){
-  const colors=['#ffd700','#ffaa00','#ff8c00','#ff3860','#00d26a','#3b82f6'];
-  for(let i=0;i<50;i++){
-    const c=document.createElement('div');
-    c.className='confetti';
-    c.style.left=Math.random()*100+'%';
-    c.style.background=colors[Math.floor(Math.random()*colors.length)];
-    c.style.width=(Math.random()*8+5)+'px';
-    c.style.height=c.style.width;
-    c.style.borderRadius=Math.random()>0.5?'50%':'0';
-    document.body.appendChild(c);
-    anime({
-      targets:c,
-      top:'110%',
-      left:`+=${(Math.random()*200-100)}px`,
-      rotate:Math.random()*720,
-      duration:2500+Math.random()*1000,
-      easing:'easeOutQuad',
-      complete:()=>c.remove()
-    });
+  if(confirm(`هل تريد الانسحاب بمبلغ €${fmtNum(S.guaranteed)}؟`)){
+    showToast(`انسحبت بمبلغ €${fmtNum(S.guaranteed)}`,'info','fa-sign-out-alt');
+    endGame(true);
   }
 }
 
 /* ====================== نهاية اللعبة ====================== */
 function endGame(won,reason=''){
   clearInterval(S.timer);
-  document.getElementById('rIcon').textContent=won?(S.qIdx>=14?'🏆':'💰'):'😢';
+  document.getElementById('rIcon').textContent=won?(S.qIdx>=14?'🏆':'💰'):'';
   document.getElementById('rTitle').textContent=won?(S.qIdx>=14?'مبروك! ربحت المليون!':'أحسنت!'):(reason||'للأسف خسرت');
   document.getElementById('rAmount').textContent='€'+fmtNum(S.guaranteed);
   document.getElementById('rName').textContent=S.name;
@@ -1501,23 +2049,27 @@ function endGame(won,reason=''){
   anime({
     targets:'#rIcon',
     scale:[0,1.2,1],
-    rotate:[0,360],
-    duration:1000,
-    easing:'easeOutElastic(1, .6)'
+    duration:600,
+    easing:'easeOutElastic(1, .8)'
   });
   anime({
     targets:'#rAmount',
     scale:[0.5,1],
     opacity:[0,1],
-    duration:1200,
-    easing:'easeOutExpo'
+    duration:800,
+    easing:'easeOutQuad'
   });
   
-  if(won && S.qIdx>=14) confetti();
+  if(won && S.qIdx>=14){
+    launchStars();
+    setTimeout(launchStars,500);
+    setTimeout(launchStars,1000);
+  }
 }
 
 /* ====================== حفظ النتائج ====================== */
 function saveScore(n,s){
+  if(s===0) return;
   let sc=JSON.parse(localStorage.getItem('wm_scores')||'[]');
   sc.push({name:n,score:s,date:new Date().toLocaleDateString('en-GB')});
   sc.sort((a,b)=>b.score-a.score);
@@ -1525,12 +2077,15 @@ function saveScore(n,s){
   localStorage.setItem('wm_scores',JSON.stringify(sc));
 }
 function renderLB(){
-  const sc=JSON.parse(localStorage.getItem('wm_scores')||'[]');
+  let sc=JSON.parse(localStorage.getItem('wm_scores')||'[]');
+  sc=sc.filter(s=>s.score>0);
+  localStorage.setItem('wm_scores',JSON.stringify(sc));
+  
   const l=document.getElementById('leaderList');
   if(!sc.length){l.innerHTML='<div style="text-align:center;padding:20px;opacity:0.7">لا توجد نتائج بعد</div>';return}
   l.innerHTML=sc.map((s,i)=>{
     const rc=i===0?'g':i===1?'s':i===2?'b':'';
-    const m=i===0?'🥇':i===1?'🥈':i===2?'🥉':`${i+1}`;
+    const m=i===0?'🥇':i===1?'':i===2?'🥉':`${i+1}`;
     return `<div class="lb-item">
       <div class="lb-rank ${rc}">${m}</div>
       <div style="flex:1;text-align:right">
@@ -1545,7 +2100,7 @@ function renderLB(){
 /* ====================== بدء اللعبة ====================== */
 function startGame(){
   const name=document.getElementById('playerName').value.trim();
-  if(!name){alert('الرجاء إدخال اسمك');return}
+  if(!name){showToast('الرجاء إدخال اسمك','error','fa-user');return}
   S.name=name;
   S.qIdx=0;S.score=0;S.guaranteed=0;
   S.helpers={fifty:true,phone:true,audience:true};
@@ -1553,9 +2108,9 @@ function startGame(){
   S.questions=loadQs().map(shuffleA);
   document.getElementById('displayName').textContent=name;
   document.getElementById('avatar').textContent=name.charAt(0);
-  // إزالة علامات الاستخدام القديمة
-  document.querySelectorAll('.helper .used').forEach(u=>u.remove());
+  document.querySelectorAll('.helper .used-mark').forEach(u=>u.remove());
   showScreen('gameScreen');
+  showToast('بالتوفيق! ','success','fa-star');
   renderQ();
 }
 
@@ -1572,25 +2127,23 @@ document.getElementById('quitBtn').onclick=quitGame;
 document.getElementById('soundBtn').onclick=function(){
   S.soundOn=!S.soundOn;
   this.innerHTML=S.soundOn?'<i class="fas fa-volume-up"></i>':'<i class="fas fa-volume-mute"></i>';
+  showToast(S.soundOn?'تم تشغيل الصوت':'تم كتم الصوت','info','fa-volume-up');
 };
-document.querySelectorAll('.theme-circle').forEach(d=>d.onclick=()=>setTheme(d.dataset.t));
 document.querySelectorAll('.modal-ov').forEach(m=>m.onclick=e=>{if(e.target===m) m.classList.remove('show')});
 
 /* ====================== التهيئة ====================== */
 window.addEventListener('load',()=>{
-  const st=localStorage.getItem('wm_theme')||'original';
-  setTheme(st);
   const sn=localStorage.getItem('wm_lastName');
   if(sn) document.getElementById('playerName').value=sn;
   setTimeout(()=>{
     anime({
       targets:'#loader',
       opacity:0,
-      duration:500,
+      duration:400,
       easing:'easeOutQuad',
       complete:()=>document.getElementById('loader').style.display='none'
     });
-  },800);
+  },600);
 });
 document.getElementById('playerName').addEventListener('input',e=>{
   localStorage.setItem('wm_lastName',e.target.value);
